@@ -349,6 +349,16 @@ body.tool-open .tfab{display:none}
 .mopt{text-align:right;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--sheet);cursor:pointer;font:inherit;color:var(--ink);overflow-x:auto}
 .mopt:hover{border-color:var(--brand-2)}
 .mqq .tx,.mopt .tx,.mans .tx{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.gate{min-height:calc(100vh - 64px);display:grid;place-items:center;padding:24px 16px;background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 55%,#2457d6 140%)}
+.gcard{background:var(--sheet);border-radius:20px;max-width:440px;width:100%;padding:30px 26px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.gbrand{font:800 34px var(--f-display);color:var(--navy);letter-spacing:.5px}.gbrand b{color:var(--gold)}
+.gcard h1{font:700 20px var(--f-display);margin:8px 0 10px;color:var(--ink)}
+.gcard p{color:var(--muted);font-size:14.5px;line-height:1.8;margin:0 0 14px}
+.gbtn{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line);background:#fff;color:#1f1f1f;border-radius:999px;padding:11px 22px;font:600 16px var(--f-body);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.gbtn svg{width:22px;height:22px}.gbtn:hover{box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.gmsg{font-size:14px;color:var(--muted);margin:6px 0 12px;min-height:20px}.gmsg.err{color:var(--red)}
+.gnote{font-size:12.5px!important;margin-top:14px!important}.gfoot{font-size:11.5px!important;margin:16px 0 0!important}
+body.locked #app,body.locked .foot,body.locked .nav,body.locked .tfab,body.locked .tdock,body.locked #who,body.locked #subBtn,body.locked #loginBtn{display:none!important}
 .mopt b{font-family:ui-monospace,monospace;margin-inline-end:6px}
 .mopt.right{border-color:var(--easy);background:var(--easy-bg)}.mopt.wrong{border-color:var(--hard);background:var(--hard-bg)}
 .msol{margin-top:10px}.msol p{margin:0 0 6px}.mans{font-weight:600;margin-top:6px}
@@ -399,6 +409,15 @@ body.tool-open .tfab{display:none}
   <button class="btn" id="loginBtn">تسجيل الدخول</button>
 </div></header>
 
+<section id="gate" class="gate" hidden><div class="gcard">
+  <div class="gbrand"><b>JO</b>MATH</div>
+  <h1>منصّة مراجعة الرياضيات للمنهاج الأردني</h1>
+  <p>من الصف الثامن حتى التوجيهي: ملخصات وأمثلة محلولة خطوة بخطوة، أسئلة الكتاب مصنّفة حسب الصعوبة مع الحلول، الأسئلة الوزارية، اختبارات وأوراق عمل.</p>
+  <div id="gateMsg" class="gmsg">جارٍ التحقّق من تسجيل الدخول…</div>
+  <button type="button" class="gbtn" id="gateBtn" hidden><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>الدخول بحساب Google</button>
+  <p class="gnote">الدخول مجاني. نستخدم اسمك وبريدك فقط لحفظ تقدّمك.</p>
+  <p class="gfoot">© 2026 د. عامر الدبوبي · جميع الحقوق محفوظة</p>
+</div></section>
 <main id="app"><div class="wrap empty">جارٍ التحميل…</div></main>
 
 <footer class="foot"><div class="wrap">
@@ -452,8 +471,9 @@ S.demo = !hasFB && !STATIC;
 if (hasFB) {
   firebase.initializeApp(C.firebase); auth = firebase.auth(); db = firebase.firestore();
   db.collection('settings').doc('site').onSnapshot(d => { const v = d.exists ? d.data() : {}; S.solOn = !!v.solutionsOn; S.qOn = !!v.questionsOn; renderBar(); render(); }, () => { });
+  auth.getRedirectResult().catch(e => gateErr(e));
   auth.onAuthStateChanged(async u => {
-    S.user = u; S.sub = null; S.sols = {}; S.imgs = {};
+    S.user = u; S.sub = null; S.sols = {}; S.imgs = {}; lockUI();
     S.admin = !!(u && (C.adminEmails || []).includes(u.email));
     if (u) {
       const ref = db.collection('users').doc(u.uid);
@@ -471,6 +491,22 @@ if (hasFB) {
   });
 } else if (STATIC) { S.solOn = true; S.qOn = true; } else { $('#demo').hidden = false; S.solOn = true; S.qOn = true; }
 if (STATIC && !hasFB) { $('#loginBtn').hidden = true; }
+const LOCK = hasFB && C.requireLogin;
+function lockUI() {
+  const locked = LOCK && !S.user; document.body.classList.toggle('locked', locked); $('#gate').hidden = !locked;
+  if (locked) { $('#gateMsg').className = 'gmsg'; $('#gateMsg').textContent = 'سجّل الدخول للمتابعة.'; $('#gateBtn').hidden = false; }
+}
+function gateErr(e) {
+  if (!e || e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') return;
+  const m = $('#gateMsg'); m.className = 'gmsg err';
+  m.textContent = /disallowed|web-storage|operation-not-supported/.test(e.code || e.message || '') ? 'افتح الموقع في متصفح Chrome أو Safari ثم سجّل الدخول (بعض التطبيقات لا تسمح بالدخول بحساب Google).' : 'تعذّر تسجيل الدخول، حاول مرة أخرى.';
+}
+async function signIn() {
+  const pr = new firebase.auth.GoogleAuthProvider(); pr.setCustomParameters({ prompt: 'select_account' });
+  try { await auth.signInWithPopup(pr); }
+  catch (e) { if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment') { try { await auth.signInWithRedirect(pr); } catch (e2) { gateErr(e2); } } else gateErr(e); }
+}
+if (LOCK) { document.body.classList.add('locked'); $('#gate').hidden = false; $('#gateBtn').onclick = signIn; }
 const isSub = () => S.sub && S.sub > new Date();
 const canSol = () => STATIC || (S.solOn && isSub()) || S.admin;
 const canQ = () => STATIC || S.qOn || S.admin;
@@ -555,7 +591,7 @@ function renderBar() {
 $('#loginBtn').onclick = async () => {
   if (S.demo) { S.user = S.user ? null : { displayName: 'طالب تجريبي', email: 'demo' }; if (!S.user) S.sub = null; renderBar(); render(); return; }
   if (S.user) return auth.signOut();
-  try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); } catch (e) { console.warn(e) }
+  signIn();
 };
 let plan = (C.plans || [])[1] || (C.plans || [])[0];
 function openSub() {

@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    // Replace with your admin Google email (same as adminEmails in config.js)
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email_verified == true
+        && request.auth.token.email in ['br4amer@icschools.ae'];
+    }
+    function me() { return request.auth != null; }
+    function userDoc() { return get(/databases/$(db)/documents/users/$(request.auth.uid)).data; }
+    function isSub() {
+      return me() && exists(/databases/$(db)/documents/users/$(request.auth.uid))
+        && userDoc().get('subUntil', timestamp.value(0)) > request.time;
+    }
+    function solutionsOn() {
+      return exists(/databases/$(db)/documents/settings/site)
+        && get(/databases/$(db)/documents/settings/site).data.get('solutionsOn', false) == true;
+    }
+
+    function questionsOn() {
+      return exists(/databases/$(db)/documents/settings/site)
+        && get(/databases/$(db)/documents/settings/site).data.get('questionsOn', false) == true;
+    }
+
+    // Question images from the textbook: hidden until the admin turns them on
+    match /qimg/{id} {
+      allow read: if isAdmin() || questionsOn();
+      allow write: if isAdmin();
+    }
+
+    // Each student's own practice progress
+    match /users/{uid}/progress/{doc} {
+      allow read, write: if me() && request.auth.uid == uid;
+    }
+
+    // Site switch: everyone reads, only admin writes
+    match /settings/{id} { allow read: if true; allow write: if isAdmin(); }
+
+    // Solutions: hidden until the admin turns them on, then subscribers only
+    match /solutions/{lesson} {
+      allow read: if isAdmin() || (solutionsOn() && isSub());
+      allow write: if isAdmin();
+    }
+
+    // Users: each student reads/creates own profile but can never set subUntil
+    match /users/{uid} {
+      allow get: if (me() && request.auth.uid == uid) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if me() && request.auth.uid == uid && !request.resource.data.keys().hasAny(['subUntil']);
+      allow update: if isAdmin() || (me() && request.auth.uid == uid
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['subUntil']));
+      allow delete: if isAdmin();
+    }
+
+    // CliQ payment requests
+    match /payments/{id} {
+      allow create: if me() && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'pending';
+      allow read: if isAdmin() || (me() && resource.data.uid == request.auth.uid);
+      allow update, delete: if isAdmin();
+    }
+  }
+}

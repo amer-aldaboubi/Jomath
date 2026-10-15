@@ -2,15 +2,19 @@
 window.JOMATH_CONFIG = {
   // Public mode: question images and solutions are served as files from this site (no login needed).
   staticMode: true,
+  // Students must sign in with Google before they can see or use the site
+  requireLogin: true,
   // 1) Firebase: Project settings → Your apps → Web app → firebaseConfig
   firebase: {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    appId: ""
+    apiKey: "AIzaSyAj-uJ8B4zRnB7FRpwvvEhZsmA45JPY2GU",
+    authDomain: "jomath-701cc.firebaseapp.com",
+    projectId: "jomath-701cc",
+    storageBucket: "jomath-701cc.firebasestorage.app",
+    messagingSenderId: "593330198938",
+    appId: "1:593330198938:web:89dc9f6282cb5a58cc4223"
   },
   // 2) Admin Google account(s) — must match the list in firestore.rules
-  adminEmails: ["YOUR_EMAIL@gmail.com"],
+  adminEmails: ["br4amer@icschools.ae"],
   // 3) CliQ details shown to students when they subscribe
   cliq: {
     alias: "JOMATH",          // your CliQ alias (or phone number)
