@@ -339,6 +339,19 @@ body.tool-open .tfab{display:none}
 .exbar .btn{padding:5px 10px;font-size:13px}
 .exa[hidden]{display:none}
 .exo{list-style:none;padding:0;margin:4px 0 8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px}.exo li{border:1px solid var(--line);border-radius:8px;padding:5px 10px}.exo li.right{border-color:var(--easy);background:var(--easy-bg);font-weight:600}
+.mfil{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 10px}
+.msel{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--muted);min-width:140px;flex:1}
+.msel select{font:500 14px var(--f-body);border:1px solid var(--line);border-radius:8px;padding:7px 8px;background:var(--sheet);color:var(--ink)}
+.mbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:12px}
+.mbar .btn{padding:5px 10px;font-size:13px}
+.mqq p{margin:0 0 6px}.mqq img,.msol img{vertical-align:middle;max-width:100%}
+.mopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:10px 0}
+.mopt{text-align:right;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--sheet);cursor:pointer;font:inherit;color:var(--ink);overflow-x:auto}
+.mopt:hover{border-color:var(--brand-2)}
+.mqq .tx,.mopt .tx,.mans .tx{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.mopt b{font-family:ui-monospace,monospace;margin-inline-end:6px}
+.mopt.right{border-color:var(--easy);background:var(--easy-bg)}.mopt.wrong{border-color:var(--hard);background:var(--hard-bg)}
+.msol{margin-top:10px}.msol p{margin:0 0 6px}.mans{font-weight:600;margin-top:6px}
 .exh{font-family:var(--f-display);font-size:20px;margin:22px 0 10px}
 .exf{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .stat-live b{font-variant-numeric:tabular-nums}
@@ -376,6 +389,7 @@ body.tool-open .tfab{display:none}
   <nav class="nav" aria-label="الأدوات">
     <div class="dd" data-dd="notes"><button type="button" aria-expanded="false" data-nav="notes">الملخصات</button><div class="menu" role="menu"></div></div>
     <div class="dd" data-dd="questions"><button type="button" aria-expanded="false" data-nav="questions">أسئلة التدريب</button><div class="menu" role="menu"></div></div>
+    <a href="#min" data-nav="min">الأسئلة الوزارية</a>
     <a href="#test" data-nav="test">اختبار مخصّص</a>
     <a href="#progress" data-nav="progress">نقاط القوة والضعف</a>
   </nav>
@@ -625,6 +639,7 @@ function viewHome() {
     <section class="sec"><h2>أدوات المراجعة</h2><div class="tools">
       <a class="tool" href="#notes"><i style="background:var(--g11)">م</i><b>الملخصات</b><span>القواعد والتعريفات وأمثلة محلولة لكل درس، مع الأخطاء الشائعة.</span></a>
       <a class="tool" href="#questions"><i style="background:var(--g10)">س</i><b>أسئلة التدريب</b><span>أسئلة كتاب الطالب وكتاب التمارين حسب المستوى، مع تصحيح ذاتي.</span></a>
+      <a class="tool" href="#min"><i style="background:var(--g12)">و</i><b>الأسئلة الوزارية – التوجيهي</b><span>أسئلة امتحانات الوزارة 2023–2026 للفرع العلمي، حسب الموضوع والسنة والصعوبة، مع الحلول.</span></a>
       <a class="tool" href="#test"><i style="background:var(--g8)">ا</i><b>اختبار مخصّص</b><span>اختر الدروس والمستوى والوقت، وابدأ اختبارًا مؤقّتًا.</span></a>
       <a class="tool" href="#progress"><i style="background:var(--g9)">ق</i><b>نقاط القوة والضعف</b><span>نسبة إتقانك لكل درس، وأين تبدأ المراجعة.</span></a>
     </div></section>
@@ -934,6 +949,54 @@ function viewWorksheet(key) {
   document.querySelectorAll('.ws .qimg[data-im]').forEach(async el => { const src = await loadImg(el.dataset.im); el.innerHTML = src ? `<img src="${src}" alt="السؤال">` : '<div class="qph">صورة السؤال غير متوفرة.</div>'; });
   if (W.sol && n) loadSol(key).then(s => { const el = $('#wsSol'); if (!el) return; el.innerHTML = items.map(x => `<div style="break-inside:avoid;margin-bottom:10px"><div class="wssec" style="background:transparent;padding:0;margin:8px 0 2px;font-size:15px">السؤال ${x.num}</div>${s && s[x.i] ? solHTML(s[x.i]) : '<div class="qph">الحل غير متوفر.</div>'}</div>`).join(''); tex(el); }).catch(() => { });
 }
+const YRS = [2026, 2025, 2024, 2023];
+async function loadMin() { if (S.mq) return S.mq; const r = await fetch('mq.json'); S.mq = await r.json(); return S.mq; }
+async function viewMin() {
+  setNav('min'); setGC('12');
+  const F = S.mf = S.mf || JSON.parse(store.get('jm_mf') || 'null') || { t: 'all', tp: 'all', y: 'all', s: 'all', lv: 'all', ty: 'all', n: 20 };
+  $('#app').innerHTML = `<div class="wrap"><div class="lhead"><div class="crumb"><a href="#home">الرئيسية</a> · التوجيهي – الفرع العلمي</div><h1>الأسئلة الوزارية</h1><p style="margin:4px 0 0;opacity:.9">أسئلة امتحانات الثانوية العامة 2023–2026، رتّبها حسب الموضوع أو السنة، وحلّ أسئلة الاختيار من متعدد مع تصحيح فوري.</p></div><div id="mBody"><div class="empty">جارٍ التحميل…</div></div></div>`;
+  const D = await loadMin(); if (location.hash !== '#min') return;
+  const TP = Object.fromEntries(D.topics.map(t => [t.id, t]));
+  const sel = (k, opts) => `<label class="msel"><span>${{ t: 'الفصل', tp: 'الموضوع', y: 'السنة', s: 'الدورة', lv: 'المستوى', ty: 'النوع' }[k]}</span><select data-mf="${k}">${opts.map(([v, l]) => `<option value="${v}"${String(F[k]) === String(v) ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select></label>`;
+  let list = D.q.filter(q => (F.t === 'all' || q.t === F.t) && (F.tp === 'all' || q.tp === F.tp) && (F.y === 'all' || q.y === +F.y) && (F.s === 'all' || q.s === +F.s) && (F.lv === 'all' || q.lv === F.lv) && (F.ty === 'all' || (F.ty === 'mc') === !!q.opt));
+  const byExam = F.y !== 'all' && F.tp === 'all';
+  list.sort(byExam ? (a, b) => a.t.localeCompare(b.t) || a.s - b.s || a.o - b.o : (a, b) => a.tp.localeCompare(b.tp) || LV.findIndex(l => l[0] === a.lv) - LV.findIndex(l => l[0] === b.lv) || b.y - a.y);
+  const tpOpts = [['all', 'كل المواضيع'], ...D.topics.filter(t => F.t === 'all' || t.t === F.t).map(t => [t.id, `${t.t === 't1' ? 'ف1' : 'ف2'} · ${t.n}`])];
+  const mp = S.mprog = S.mprog || (() => { try { return JSON.parse(store.get('jm_mprog') || '{}'); } catch (e) { return {}; } })();
+  const done = list.filter(q => mp[q.id] !== undefined).length, right = list.filter(q => mp[q.id] === 1).length;
+  const cards = list.slice(0, F.n).map((q, i) => minCard(q, i + 1, TP[q.tp], byExam)).join('');
+  $('#mBody').innerHTML = `<div class="mfil">${sel('t', [['all', 'الفصلان'], ['t1', 'الفصل الأول'], ['t2', 'الفصل الثاني']])}${sel('tp', tpOpts)}${sel('y', [['all', 'كل السنوات'], ...YRS.map(y => [y, y])])}${sel('s', [['all', 'الدورتان'], [0, 'الدورة الرئيسية'], [1, 'الدورة التكميلية']])}${sel('lv', [['all', 'كل المستويات'], ...LV.map(([k, n]) => [k, n])])}${sel('ty', [['all', 'كل الأنواع'], ['mc', 'اختيار من متعدد'], ['wr', 'أسئلة مقالية']])}</div>
+    <div class="mbar"><span><b>${list.length}</b> سؤالًا${byExam ? ' · مرتّبة كما في ورقة الامتحان' : ''}</span><span>حللت ${done} منها${done ? ` · صحيحة ${right}` : ''}</span>${F.y === 'all' ? `<span class="spacer"></span>${YRS.map(y => `<button class="btn" data-yr="${y}">امتحان ${y}</button>`).join('')}` : ''}</div>
+    <div class="qs">${cards || '<div class="empty">لا أسئلة بهذه الخيارات.</div>'}</div>
+    ${list.length > F.n ? `<div style="text-align:center;margin:16px 0"><button class="btn pri" id="mMore">اعرض ${Math.min(20, list.length - F.n)} أسئلة أخرى (${list.length - F.n} متبقية)</button></div>` : ''}`;
+  const save = () => store.set('jm_mf', JSON.stringify(F));
+  document.querySelectorAll('[data-mf]').forEach(el => el.onchange = () => { F[el.dataset.mf] = el.value; if (el.dataset.mf === 't') F.tp = 'all'; F.n = 20; save(); viewMin(); });
+  document.querySelectorAll('[data-yr]').forEach(b => b.onclick = () => { Object.assign(F, { y: b.dataset.yr, tp: 'all', lv: 'all', ty: 'all', n: 200 }); save(); viewMin(); });
+  const mm = $('#mMore'); if (mm) mm.onclick = () => { F.n += 20; save(); const y = scrollY; viewMin().then(() => scrollTo(0, y)); };
+  wireMin($('#mBody')); tex($('#mBody'));
+}
+function minCard(q, n, tp, byExam) {
+  const [ln, lc] = LVN[q.lv] || ['', '']; const v = (S.mprog || {})[q.id];
+  return `<article class="q ${lc} mq" data-mq="${q.id}"><div class="qh"><span class="qn">${byExam ? '' : `${n}.`} ${q.y}${q.s ? ' تكميلي' : ''}</span><span class="pill">${ln}</span><span class="qref">${esc(q.ref)}</span><span class="qsk">${esc(tp ? tp.n : '')}</span></div>
+    <div class="qb"><div class="mqq">${q.q}</div>${q.opt ? `<div class="mopts">${q.opt.map((o, k) => `<button type="button" class="mopt" data-k="${k}"><b dir="ltr">${'abcd'[k]})</b> ${o}</button>`).join('')}</div><div class="afb" role="status"></div>` : ''}
+      <div class="sol hw msol" hidden>${q.sol}${q.ans ? `<div class="mans">${q.ans}</div>` : ''}</div></div>
+    <div class="qf"><button type="button" class="btn" data-msol>أظهر الحل</button><span class="spacer"></span>${q.opt ? '' : `<span class="lbl">كيف كان حلّك؟</span>${[[1, 'صحيح'], [.5, 'جزئيًا'], [0, 'خطأ']].map(([x, l]) => `<button class="mk" data-mm="${x}" aria-pressed="${v === x}">${l}</button>`).join('')}`}</div></article>`;
+}
+function wireMin(root) {
+  const D = S.mq, byId = Object.fromEntries(D.q.map(q => [q.id, q]));
+  const setP = (id, v) => { S.mprog[id] = v; store.set('jm_mprog', JSON.stringify(S.mprog)); if (v > 0 && window.JMT) JMT.solvedOnce('mq_' + id); };
+  root.querySelectorAll('.mq').forEach(card => {
+    const q = byId[card.dataset.mq], sol = card.querySelector('.msol'), sb = card.querySelector('[data-msol]'), fb = card.querySelector('.afb');
+    sb.onclick = () => { sol.hidden = !sol.hidden; sb.textContent = sol.hidden ? 'أظهر الحل' : 'إخفاء الحل'; };
+    card.querySelectorAll('.mopt').forEach(b => b.onclick = () => {
+      if (card.dataset.done) return; const k = +b.dataset.k, ok = k === q.ok; card.dataset.done = 1;
+      b.classList.add(ok ? 'right' : 'wrong'); card.querySelectorAll('.mopt')[q.ok]?.classList.add('right');
+      fb.className = 'afb ' + (ok ? 'ok' : 'no'); fb.textContent = ok ? '✓ إجابة صحيحة، أحسنت!' : `✗ غير صحيحة. الإجابة الصحيحة (${'abcd'[q.ok]}). اطّلع على الحل.`;
+      setP(q.id, ok ? 1 : 0);
+    });
+    card.querySelectorAll('[data-mm]').forEach(b => b.onclick = () => { setP(q.id, +b.dataset.mm); card.querySelectorAll('[data-mm]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); });
+  });
+}
 function render() {
   if (!S.data) return;
   clearInterval(S.tick);
@@ -948,6 +1011,7 @@ function render() {
   if ((m = h.match(/^n-(.+)$/))) return viewNotes(m[1]);
   if ((m = h.match(/^w-(.+)$/))) return viewWorksheet(m[1]);
   if ((m = h.match(/^q-(.+)$/))) { if (S.lastQ !== m[1]) { S.lv = 'all'; S.lastQ = m[1]; } return viewQuestions(m[1]); }
+  if (h === 'min') return viewMin();
   if (h === 'test') return viewTest();
   if (h === 'run') return viewRun();
   if (h === 'progress') return viewProgress();
