@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>JOMATH</title>
+<meta name="description" content="JOMATH – منصّة مراجعة الرياضيات للمنهاج الأردني من الصف الثامن حتى التوجيهي: ملخصات الدروس، أسئلة الكتاب مصنّفة حسب المستوى، اختبارات مخصّصة، ونقاط القوة والضعف.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="katex.css">
+<link rel="stylesheet" href="hw.css">
+<style>
+/* Layout: revision platform — top tool nav, course page (units → lessons with progress), lesson pages for notes and practice, test builder, progress dashboard */
+:root{
+  --paper:#f4f6fb; --sheet:#ffffff; --ink:#111a33; --muted:#5a6683; --line:#dfe4f0; --soft:#eef2fb;
+  --navy:#0e1a3c; --navy-2:#16265a; --on-navy:#ffffff; --on-navy-2:#b9c4e6;
+  --brand:#2457d6; --brand-2:#2457d6; --red:#e0193a; --gold:#e8a317;
+  --g8:#f2711c; --g9:#7b3fe4; --g10:#16a05d; --g11:#1f7ae0; --g12:#d9283f; --g12B:#c88a06;
+  --easy:#15965a; --easy-bg:#e3f6ec; --med:#b07d00; --med-bg:#fdf3d7; --hard:#d33a2c; --hard-bg:#fde9e7; --chal:#2457d6; --chal-bg:#e7eefd;
+  --warn-bg:#fff6e6; --warn-line:#efc98a; --warn-ink:#8a4b00;
+  --f-display:"Readex Pro","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Arabic","Readex Pro",system-ui,sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0b1120; --sheet:#121a2e; --ink:#e7ecf8; --muted:#9ba8c8; --line:#243052; --soft:#18223c;
+  --navy:#08101f; --navy-2:#121d3a; --on-navy:#ffffff; --on-navy-2:#a9b6dc;
+  --brand:#6f97ff; --brand-2:#6f97ff; --red:#ff5d75; --gold:#f2bd4b;
+  --easy:#4fd08f; --easy-bg:#13301f; --med:#e8b53d; --med-bg:#30290f; --hard:#ff7b6d; --hard-bg:#361a17; --chal:#7ea2ff; --chal-bg:#172447;
+  --warn-bg:#2b2112; --warn-line:#6a4d1f; --warn-ink:#f2c27a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0b1120; --sheet:#121a2e; --ink:#e7ecf8; --muted:#9ba8c8; --line:#243052; --soft:#18223c;
+  --navy:#08101f; --navy-2:#121d3a; --on-navy:#ffffff; --on-navy-2:#a9b6dc;
+  --brand:#6f97ff; --brand-2:#6f97ff; --red:#ff5d75; --gold:#f2bd4b;
+  --easy:#4fd08f; --easy-bg:#13301f; --med:#e8b53d; --med-bg:#30290f; --hard:#ff7b6d; --hard-bg:#361a17; --chal:#7ea2ff; --chal-bg:#172447;
+  --warn-bg:#2b2112; --warn-line:#6a4d1f; --warn-ink:#f2c27a; color-scheme:dark}
+*{box-sizing:border-box}
+html{direction:rtl}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.75;margin:0}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--brand-2)}
+:focus-visible{outline:2px solid var(--brand-2);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.35}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--navy);color:var(--on-navy);border-bottom:1px solid var(--navy-2)}
+.bar .wrap{display:flex;align-items:center;gap:14px;min-height:64px;flex-wrap:wrap;padding-block:6px}
+@media (max-width:640px){.bar .wrap{gap:6px 10px}.nav{order:3;width:100%}.dd>button,.nav>a{padding:6px 9px;font-size:13.5px}}
+.brand{font-family:var(--f-display);font-weight:700;font-size:24px;letter-spacing:.5px;direction:ltr;text-decoration:none;color:var(--on-navy)}
+.brand b{color:var(--gold)}
+.nav{display:flex;gap:2px;flex-wrap:wrap}
+.dd{position:relative}
+.dd>button,.nav>a{white-space:nowrap;text-decoration:none;color:var(--on-navy);font-weight:600;font-size:14.5px;padding:8px 12px;border-radius:10px;background:transparent;border:0;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.dd>button::after{content:"▾";font-size:12px;opacity:.75}
+.dd>button:hover,.nav>a:hover,.dd.open>button{background:var(--navy-2)}
+.nav [aria-current="page"]{box-shadow:inset 0 -3px 0 var(--gold)}
+.menu{position:absolute;inset-inline-start:0;top:calc(100% + 6px);background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 40px rgba(10,20,50,.18);padding:8px;min-width:240px;display:none;z-index:40}
+.dd.open .menu{display:block}
+.menu a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);padding:8px 10px;border-radius:8px;font-weight:600;font-size:14px}
+.menu a:hover{background:var(--soft)}
+.menu a i{width:10px;height:10px;border-radius:3px;flex:none}
+.spacer{flex:1}
+.who{font-size:13px;color:var(--on-navy-2);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.who a{color:var(--gold)}
+.badge{font-size:11px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--gold);color:var(--navy)}
+.btn{border:1px solid var(--line);background:var(--sheet);border-radius:10px;padding:7px 14px;cursor:pointer;font-weight:600;font-size:14px;text-decoration:none;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--brand)}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+.bar .btn{border-color:var(--navy-2);background:transparent;color:var(--on-navy)}
+.bar .btn.gold{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.5;cursor:default}
+.demo{background:var(--warn-bg);color:var(--warn-ink);font-size:13px;border-bottom:1px solid var(--warn-line)}
+.demo .wrap{padding-block:6px}
+main{min-height:60vh}
+.heroband{background:var(--navy);color:var(--on-navy);padding-block:44px 64px}
+.heroband h1{font-size:clamp(28px,4.8vw,48px);margin:0 0 10px;max-width:22ch}
+.heroband h1 em{font-style:normal;color:var(--gold)}
+.heroband p{color:var(--on-navy-2);margin:0 0 22px;max-width:60ch;font-size:16px}
+.search{position:relative;max-width:640px}
+.search input{width:100%;border:0;border-radius:14px;padding:16px 20px;font-size:16px;background:#fff;color:#111a33;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.search input::placeholder{color:#6b7695}
+.results{position:absolute;inset-inline:0;top:calc(100% + 8px);background:var(--sheet);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 50px rgba(10,20,50,.25);max-height:420px;overflow:auto;z-index:20;padding:6px}
+.results a{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 10px;align-items:center;text-decoration:none;color:var(--ink);padding:9px 10px;border-radius:10px}
+.results a:hover,.results a:focus{background:var(--soft)}
+.results a i{width:10px;height:10px;border-radius:3px;grid-row:1/span 2}
+.results a b{font-weight:600}
+.results a small{color:var(--muted);grid-column:2}
+.results a span{grid-row:1/span 2;grid-column:3;font-size:12px;color:var(--brand);font-weight:700}
+.results .none{padding:14px;color:var(--muted)}
+.qstats{display:flex;gap:26px;flex-wrap:wrap;margin-top:22px}
+.qstats b{display:block;font-family:var(--f-display);font-size:24px;font-variant-numeric:tabular-nums;color:var(--on-navy)}
+.qstats span{font-size:13px;color:var(--on-navy-2)}
+.pull{margin-top:-40px}
+.courses{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.course{border-radius:var(--r);text-decoration:none;color:#fff;display:flex;flex-direction:column;gap:4px;padding:18px;min-height:130px;background:var(--gc);box-shadow:0 8px 24px rgba(10,20,50,.12);position:relative;overflow:hidden}
+.course::after{content:attr(data-n);position:absolute;inset-inline-end:-6px;bottom:-26px;font-family:var(--f-display);font-weight:700;font-size:92px;opacity:.16;line-height:1;direction:ltr}
+.course b{font-family:var(--f-display);font-size:19px}
+.course span{font-size:13px;opacity:.9}
+.course .pbar{margin-top:auto;background:rgba(255,255,255,.3)}
+.course:hover{transform:translateY(-2px)}
+.course.off{background:var(--sheet);color:var(--muted);border:1px dashed var(--line);box-shadow:none;pointer-events:none}
+.sec{margin-block:30px}
+.sec h2{font-size:22px;margin:0 0 14px}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.tool{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:18px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:6px}
+.tool:hover{border-color:var(--brand);box-shadow:0 8px 24px rgba(10,20,50,.08)}
+.tool b{font-family:var(--f-display);font-size:17px}
+.tool span{font-size:13.5px;color:var(--muted);line-height:1.6}
+.tool i{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-style:normal;font-family:var(--f-display);font-weight:700;color:#fff;background:var(--brand)}
+.pbar{height:6px;border-radius:6px;background:var(--soft);overflow:hidden;display:flex}
+.pbar i{display:block;height:100%}
+.pbar .ok{background:var(--easy)}.course .pbar .ok,.course .pbar .pa,.course .pbar .no{background:#fff}.pbar .pa{background:var(--med)}.pbar .no{background:var(--hard)}
+.chead,.lhead{background:var(--gc,var(--navy));box-shadow:0 0 0 100vmax var(--gc,var(--navy));clip-path:inset(0 -100vmax);color:#fff;margin-bottom:20px}
+.chead .crumb,.chead .crumb a,.lhead .crumb,.lhead .crumb a{color:rgba(255,255,255,.85)}
+.chead h1,.lhead h1{color:#fff}
+.chead .tabs a,.chead .tabs button,.lhead .tabs a{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);color:#fff}
+.chead .tabs [aria-pressed="true"],.chead .tabs [aria-current="page"],.lhead .tabs [aria-current="page"]{background:#fff;color:var(--ink);border-color:#fff}
+.chead .btn{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);color:#fff}.chead .btn.pri{background:#fff;color:var(--ink);border-color:#fff}
+.chead{padding-block:26px 22px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:end}
+.chead h1{margin:0;font-size:clamp(24px,3.6vw,34px)}
+.crumb{font-size:13px;color:var(--muted)}
+.crumb a{color:var(--muted)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button,.tabs a{border:1px solid var(--line);background:var(--sheet);border-radius:999px;padding:5px 14px;cursor:pointer;font-weight:600;font-size:14px;text-decoration:none;color:var(--ink)}
+.tabs [aria-pressed="true"],.tabs [aria-current="page"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.cgrid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;padding-bottom:40px}
+@media (max-width:900px){.cgrid{grid-template-columns:minmax(0,1fr)}}
+.unit{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.unit>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;gap:12px;align-items:center}
+.unit>summary::-webkit-details-marker{display:none}
+.unit>summary .un{font-family:var(--f-display);font-weight:700;color:var(--red);font-size:13px;white-space:nowrap}
+.unit>summary .ut{font-family:var(--f-display);font-weight:600;font-size:17px;flex:1;min-width:0}
+.unit>summary .pct{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.lrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;align-items:center;padding:10px 16px;border-top:1px solid var(--line)}
+.lrow .lt{font-weight:600}
+.lrow .lt small{color:var(--muted);font-weight:500;margin-inline-start:6px}
+.lrow .acts{display:flex;gap:6px;grid-row:1/span 2;grid-column:2}
+.lrow .pbar{grid-column:1;max-width:320px}
+@media (max-width:560px){.lrow{grid-template-columns:minmax(0,1fr)}.lrow .acts{grid-row:auto;grid-column:1}}
+.side{display:flex;flex-direction:column;gap:12px;align-self:start;min-width:0}
+.card{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.card h3{margin:0 0 6px;font-size:16px}
+.card p{margin:0 0 10px;font-size:13.5px;color:var(--muted)}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:4px;vertical-align:-1px}
+.lgrid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:22px;padding-bottom:40px}
+@media (max-width:900px){.lgrid{grid-template-columns:minmax(0,1fr)}}
+.lgrid>*{min-width:0}
+.lhead{padding-block:22px 20px}
+.lhead h1{margin:2px 0 8px;font-size:clamp(22px,3.2vw,30px)}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px);max-height:calc(100vh - 100px);overflow:auto}
+@media (max-width:900px){.toc{position:static;max-height:none}}
+.toc a{display:block;text-decoration:none;color:var(--ink);font-size:13.5px;padding:4px 8px;border-radius:7px;line-height:1.5}
+.toc a[aria-current="true"]{background:var(--soft);color:var(--brand-2);font-weight:600}
+.toc h4{font-family:var(--f-display);font-size:12.5px;color:var(--muted);margin:10px 8px 2px}
+.note{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;max-width:76ch}
+.note .ov{font-size:16px;color:var(--muted);border-inline-start:3px solid var(--brand-2);padding-inline-start:12px;margin:0 0 14px}
+.note h3{font-size:18px;margin:18px 0 6px;color:var(--brand)}
+.note p{margin:0 0 10px}
+.def{background:var(--soft);border-radius:10px;padding:10px 14px;margin:0 0 10px}
+.def b{font-family:var(--f-display);color:var(--brand)}
+.fml{border:1.5px solid var(--brand-2);border-radius:10px;padding:10px 14px;margin:0 0 10px;display:flex;flex-direction:column;gap:4px}
+.fml .fl{font-size:12.5px;color:var(--muted);font-weight:600}
+.fml .ft{direction:ltr;text-align:center;font-size:18px;overflow-x:auto;display:block}
+.ex{border:1px dashed var(--line);border-radius:10px;padding:12px 14px;margin:0 0 12px}
+.ex .eq{font-weight:600;margin-bottom:6px}
+.ex .eq::before{content:"مثال: ";color:var(--gold);font-family:var(--f-display)}
+.tip{background:var(--warn-bg);border:1px solid var(--warn-line);color:var(--ink);border-radius:10px;padding:10px 14px;margin:0 0 10px}
+.tip::before{content:"انتبه: ";font-weight:700;color:var(--warn-ink)}
+.note ul{margin:0 0 10px;padding-inline-start:22px}
+.mist{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:var(--r);padding:14px 18px;margin-top:16px;max-width:76ch}
+.mist h3{margin:0 0 6px;font-size:16px;color:var(--warn-ink)}
+.mist ul{margin:0;padding-inline-start:20px}.mist li{margin-bottom:6px;font-size:14px}
+.tm{font-size:10px;font-weight:700;background:var(--warn-ink);color:var(--warn-bg);border-radius:4px;padding:0 5px;margin-inline-start:4px;vertical-align:2px}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:16px;max-width:76ch;flex-wrap:wrap}
+.tx{direction:ltr;unicode-bidi:isolate;display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle}
+.mm,span[dir=ltr]{unicode-bidi:isolate}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px;align-items:center}
+.lv{border:1.5px solid var(--c);color:var(--c);background:transparent;border-radius:999px;padding:3px 14px;cursor:pointer;font-weight:600;font-size:13px;font-variant-numeric:tabular-nums}
+.lv[aria-pressed="true"]{background:var(--c);color:var(--sheet)}
+.lv.all{--c:var(--ink)}
+.e{--c:var(--easy);--cb:var(--easy-bg)} .m{--c:var(--med);--cb:var(--med-bg)} .h{--c:var(--hard);--cb:var(--hard-bg)} .x{--c:var(--chal);--cb:var(--chal-bg)}
+.qs{display:flex;flex-direction:column;gap:14px}
+.q{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;border-inline-start:4px solid var(--c)}
+.qh{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--line)}
+.qn{font-family:var(--f-display);font-weight:700}
+.pill{font-size:12px;font-weight:700;border-radius:999px;padding:1px 10px;background:var(--cb);color:var(--c)}
+.qref{font-size:13px;color:var(--muted)}
+.qsk{font-size:13px;color:var(--muted);margin-inline-start:auto}
+.qb{padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.qimg{background:#fff;border-radius:8px;padding:6px;border:1px solid var(--line);text-align:center;overflow-x:auto}
+.qimg img{max-width:100%;height:auto;display:inline-block}
+.qph{border:1.5px dashed var(--line);border-radius:10px;padding:16px;text-align:center;color:var(--muted);font-size:14px}
+.qf{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 16px;border-top:1px solid var(--line);background:var(--soft)}
+.qf .lbl{font-size:13px;color:var(--muted)}
+.mk{border:1.5px solid var(--line);background:var(--sheet);border-radius:999px;padding:4px 12px;cursor:pointer;font-weight:600;font-size:13px}
+.mk[data-v="1"][aria-pressed="true"]{background:var(--easy);border-color:var(--easy);color:var(--sheet)}
+.mk[data-v="0.5"][aria-pressed="true"]{background:var(--med);border-color:var(--med);color:var(--sheet)}
+.mk[data-v="0"][aria-pressed="true"]{background:var(--hard);border-color:var(--hard);color:var(--sheet)}
+.lock{font-size:13px;color:var(--muted)}
+.sol{border-top:1px dashed var(--line);padding-top:8px}
+.it{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;margin:8px 0}
+.it>div{min-width:0}
+.itn{min-width:28px;height:28px;border-radius:14px;border:1.5px solid var(--hw);font-family:'HW Latin',sans-serif;font-size:17px;display:grid;place-items:center;padding-inline:6px;direction:ltr}
+.st{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 16px;align-items:center;overflow-x:auto}
+.st .mth{direction:ltr;text-align:left}
+.st .why{font-size:16px}
+.ans{display:inline-block;margin-top:4px;border:1.5px solid var(--hw);border-radius:7px;padding:2px 10px;max-width:100%;overflow-x:auto}
+.nt{font-size:15px;max-width:100%;overflow-x:auto}
+.ad{border:1px dashed var(--line);border-radius:10px;min-height:90px;display:grid;place-items:center;color:var(--muted);font-size:12px}
+.tb{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;padding-block:20px 40px}
+@media (max-width:900px){.tb{grid-template-columns:minmax(0,1fr)}}
+.tb>*{min-width:0}
+.field{margin-bottom:16px}
+.field>b{display:block;font-family:var(--f-display);margin-bottom:6px}
+.chk{display:flex;flex-wrap:wrap;gap:6px}
+.chk label{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:13.5px;cursor:pointer;background:var(--sheet)}
+.chk input{accent-color:var(--brand-2)}
+.ulist{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--sheet)}
+.ulist h4{margin:8px 0 2px;font-family:var(--f-display);font-size:13px;color:var(--muted)}
+.ulist label{display:flex;gap:8px;align-items:center;font-size:14px;padding:2px 0}
+select{border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--sheet);max-width:100%}
+.runbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:5;background:var(--paper);padding-block:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.timer{font-family:var(--f-display);font-weight:700;font-variant-numeric:tabular-nums;font-size:18px;direction:ltr}
+.timer.low{color:var(--red)}
+.dots{display:flex;gap:4px;flex-wrap:wrap}
+.dots button{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:var(--sheet);font-size:12px;cursor:pointer;font-variant-numeric:tabular-nums}
+.dots button[aria-current="true"]{border-color:var(--ink);border-width:2px;font-weight:700}
+.dots button.d1{background:var(--easy);color:var(--sheet);border-color:var(--easy)}
+.dots button.d5{background:var(--med);color:var(--sheet);border-color:var(--med)}
+.dots button.d0{background:var(--hard);color:var(--sheet);border-color:var(--hard)}
+.score{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-block:14px}
+.score div{background:var(--sheet);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+.score b{display:block;font-family:var(--f-display);font-size:26px;font-variant-numeric:tabular-nums}
+.score span{font-size:13px;color:var(--muted)}
+.tbl{overflow-x:auto;background:var(--sheet);border:1px solid var(--line);border-radius:var(--r)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-size:12.5px;color:var(--muted);font-weight:600}
+td.num{font-variant-numeric:tabular-nums}
+.str{font-size:12px;font-weight:700;border-radius:999px;padding:1px 10px}
+.str.s3{background:var(--easy-bg);color:var(--easy)}.str.s2{background:var(--med-bg);color:var(--med)}.str.s1{background:var(--hard-bg);color:var(--hard)}.str.s0{background:var(--soft);color:var(--muted)}
+.empty{color:var(--muted);padding:24px;text-align:center}
+.foot{border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;margin-top:20px}
+.foot .wrap{padding-block:18px 26px;display:flex;flex-direction:column;gap:6px}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--sheet);color:var(--ink);padding:0;width:min(520px,calc(100vw - 32px))}
+dialog::backdrop{background:rgba(10,20,15,.45)}
+.dlg{padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.dlg h3{margin:0}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.plan{border:1.5px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;background:transparent;text-align:right}
+.plan[aria-pressed="true"]{border-color:var(--brand-2);background:var(--soft)}
+.plan .p{font-family:var(--f-display);font-size:22px;font-weight:700}
+.cliq{background:var(--soft);border-radius:10px;padding:10px 12px;font-size:14px}
+.cliq code{font-family:var(--f-display);font-size:17px;font-weight:700;direction:ltr;unicode-bidi:isolate}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+label.f{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:3px;flex:1;min-width:150px}
+input[type=text]{border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:var(--paper)}
+.ok{color:var(--brand-2);font-weight:600}.err{color:var(--red);font-size:13px}
+@media (prefers-reduced-motion:no-preference){.tool,.course,.btn{transition:border-color .15s,background .15s}}
+</style>
+
+</head>
+<body>
+<div class="demo" id="demo" hidden><div class="wrap">وضع المعاينة: تسجيل الدخول والاشتراك والتقدّم يعمل على هذا الجهاز فقط حتى ربط الموقع بـ Firebase. صور الأسئلة والحلول هنا لعيّنة من الدروس.</div></div>
+<header class="bar"><div class="wrap">
+  <a class="brand" href="#home"><b>JO</b>MATH</a>
+  <nav class="nav" aria-label="الأدوات">
+    <div class="dd" data-dd="notes"><button type="button" aria-expanded="false" data-nav="notes">الملخصات</button><div class="menu" role="menu"></div></div>
+    <div class="dd" data-dd="questions"><button type="button" aria-expanded="false" data-nav="questions">أسئلة التدريب</button><div class="menu" role="menu"></div></div>
+    <a href="#test" data-nav="test">اختبار مخصّص</a>
+    <a href="#progress" data-nav="progress">نقاط القوة والضعف</a>
+  </nav>
+  <span class="spacer"></span>
+  <span class="who" id="who"></span>
+  <button class="btn gold" id="subBtn" hidden>اشترك</button>
+  <button class="btn" id="loginBtn">تسجيل الدخول</button>
+</div></header>
+
+<main id="app"><div class="wrap empty">جارٍ التحميل…</div></main>
+
+<footer class="foot"><div class="wrap">
+  <div><b>JOMATH</b> · منصّة مراجعة الرياضيات للمنهاج الأردني · إعداد د. عامر الدبوبي</div>
+  <div>الأسئلة من كتب الرياضيات الصادرة عن المركز الوطني لتطوير المناهج. الكتب الرسمية: <a id="booksLink" href="https://nccd.gov.jo/Ar/Pages/textbooks" target="_blank" rel="noopener">موقع المركز الوطني لتطوير المناهج</a>.</div>
+</div></footer>
+
+<dialog id="subDlg"><form class="dlg" id="subForm" method="dialog">
+  <h3>الاشتراك في JOMATH</h3>
+  <div class="plans" id="plans"></div>
+  <div class="cliq" id="cliqBox"></div>
+  <div class="row">
+    <label class="f" for="payName">اسمك كما يظهر في تحويل CliQ<input type="text" id="payName" required></label>
+    <label class="f" for="payRef">رقم مرجع التحويل (اختياري)<input type="text" id="payRef"></label>
+  </div>
+  <div id="subMsg"></div>
+  <div class="row"><button class="btn pri" id="paySend" type="submit">أرسلتُ التحويل</button><button class="btn" type="button" id="subClose">إغلاق</button></div>
+</form></dialog>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<script src="config.js"></script>
+<script>
+(() => {
+const C = window.JOMATH_CONFIG || {};
+const LV = [['easy','سهل','e'],['medium','متوسط','m'],['hard','صعب','h'],['challenge','تحدٍّ','x']];
+const LVN = Object.fromEntries(LV.map(([k, n, c]) => [k, [n, c]]));
+const BK = { sb: 'كتاب الطالب', ut: 'اختبار نهاية الوحدة', wb: 'كتاب التمارين' };
+const TN = { t1: 'الفصل الأول', t2: 'الفصل الثاني' };
+const GSHORT = { '8': 'الصف الثامن', '9': 'الصف التاسع', '10': 'الصف العاشر', '11': 'الصف الحادي عشر', '12': 'التوجيهي – أكاديمي', '12B': 'التوجيهي – رياضيات الأعمال' };
+const GC = { '8': 'var(--g8)', '9': 'var(--g9)', '10': 'var(--g10)', '11': 'var(--g11)', '12': 'var(--g12)', '12B': 'var(--g12B)' };
+const setGC = id => { const a = document.getElementById('app'); if (id) a.style.setProperty('--gc', GC[id]); else a.style.removeProperty('--gc'); };
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const store = { get(k) { try { return localStorage.getItem(k) } catch (e) { return null } }, set(k, v) { try { localStorage.setItem(k, v) } catch (e) { } } };
+
+const S = { data: null, notes: {}, user: null, sub: null, admin: false, solOn: false, qOn: false, sols: {}, imgs: {}, demo: false,
+  grade: store.get('jm_grade') || '8', term: 't1', lv: 'all', open: new Set(), prog: {}, run: null, tick: null };
+try { S.prog = JSON.parse(store.get('jm_prog') || '{}') } catch (e) { S.prog = {} }
+let db = null, auth = null;
+
+const hasFB = !!(window.firebase && C.firebase && C.firebase.apiKey);
+const STATIC = !!C.staticMode;
+S.demo = !hasFB && !STATIC;
+if (hasFB) {
+  firebase.initializeApp(C.firebase); auth = firebase.auth(); db = firebase.firestore();
+  db.collection('settings').doc('site').onSnapshot(d => { const v = d.exists ? d.data() : {}; S.solOn = !!v.solutionsOn; S.qOn = !!v.questionsOn; renderBar(); render(); }, () => { });
+  auth.onAuthStateChanged(async u => {
+    S.user = u; S.sub = null; S.sols = {}; S.imgs = {};
+    S.admin = !!(u && (C.adminEmails || []).includes(u.email));
+    if (u) {
+      const ref = db.collection('users').doc(u.uid);
+      try {
+        const snap = await ref.get();
+        if (!snap.exists) await ref.set({ email: u.email || '', name: u.displayName || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        else await ref.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
+        ref.onSnapshot(d => { const v = d.data() || {}; S.sub = v.subUntil ? v.subUntil.toDate() : null; renderBar(); render(); });
+        const pg = await ref.collection('progress').doc('all').get();
+        if (pg.exists) mergeProg(JSON.parse(pg.data().json || '{}'));
+        saveProg(true);
+      } catch (e) { console.warn(e) }
+    }
+    renderBar(); render();
+  });
+} else if (STATIC) { S.solOn = true; S.qOn = true; } else { $('#demo').hidden = false; S.solOn = true; S.qOn = true; }
+if (STATIC && !hasFB) { $('#loginBtn').hidden = true; }
+const isSub = () => S.sub && S.sub > new Date();
+const canSol = () => STATIC || (S.solOn && isSub()) || S.admin;
+const canQ = () => STATIC || S.qOn || S.admin;
+
+function mergeProg(r) { for (const k in r) S.prog[k] = Object.assign({}, r[k], S.prog[k] || {}); }
+let saveT = null;
+function saveProg(now) {
+  store.set('jm_prog', JSON.stringify(S.prog));
+  if (!db || !S.user) return;
+  clearTimeout(saveT);
+  saveT = setTimeout(() => db.collection('users').doc(S.user.uid).collection('progress').doc('all').set({ json: JSON.stringify(S.prog), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }).catch(() => { }), now ? 0 : 1500);
+}
+function mark(key, im, v) { S.prog[key] = S.prog[key] || {}; if (S.prog[key][im] === v) delete S.prog[key][im]; else S.prog[key][im] = v; saveProg(); }
+function lessonStats(key, L) {
+  const p = S.prog[key] || {}; let done = 0, sum = 0, ok = 0, pa = 0, no = 0;
+  for (const q of L.q) { const v = p[q.im]; if (v === undefined) continue; done++; sum += v; if (v === 1) ok++; else if (v === 0) no++; else pa++; }
+  return { total: L.q.length, done, ok, pa, no, score: done ? sum / done : null };
+}
+function pbar(st) {
+  const t = st.total || 1;
+  return `<div class="pbar" role="img" aria-label="أُنجز ${st.done} من ${st.total}"><i class="ok" style="width:${st.ok / t * 100}%"></i><i class="pa" style="width:${st.pa / t * 100}%"></i><i class="no" style="width:${st.no / t * 100}%"></i></div>`;
+}
+function strength(st) {
+  if (!st.done) return ['لم تبدأ', 's0'];
+  if (st.score >= .75) return ['قوي', 's3'];
+  if (st.score >= .5) return ['متوسط', 's2'];
+  return ['يحتاج مراجعة', 's1'];
+}
+
+const G_ = id => S.data.grades.find(g => g.id === id) || S.data.grades[0];
+function lessonsOf(G) { const out = []; for (const T of G.terms) for (const U of T.units) for (const L of U.l) out.push({ key: `${G.id}-${T.t}-${U.u}-${L.n}`, G, T, U, L }); return out; }
+function findLesson(key) {
+  const m = String(key).match(/^(8|9|10|11|12B|12)-(t[12])-(\d+)-(\d+)$/); if (!m) return null;
+  const G = S.data.grades.find(x => x.id === m[1]); const T = G && G.terms.find(x => x.t === m[2]);
+  const U = T && T.units.find(x => String(x.u) === m[3]); const L = U && U.l.find(x => String(x.n) === m[4]);
+  return L ? { key, G, T, U, L } : null;
+}
+async function loadNotes(gid) {
+  if (S.notes[gid]) return S.notes[gid];
+  try { const r = await fetch(`notes/${gid}.json`); S.notes[gid] = r.ok ? await r.json() : {}; } catch (e) { S.notes[gid] = {}; }
+  return S.notes[gid];
+}
+async function loadSol(key) {
+  if (S.sols[key]) return S.sols[key];
+  if (STATIC) { try { const r = await fetch(`sol/${key}.json`); S.sols[key] = r.ok ? await r.json() : null; } catch (e) { S.sols[key] = null; } return S.sols[key]; }
+  if (S.demo) {
+    try { const r = await fetch('preview-solutions.json'); if (r.ok) { const all = await r.json(); for (const k in all) S.sols[k] = all[k]; } } catch (e) { }
+    return S.sols[key] || null;
+  }
+  const d = await db.collection('solutions').doc(key).get();
+  if (!d.exists) return null; S.sols[key] = JSON.parse(d.data().json); return S.sols[key];
+}
+async function loadImg(im) {
+  if (S.imgs[im] !== undefined) return S.imgs[im];
+  if (STATIC) { S.imgs[im] = `qimg/${im}.webp`; return S.imgs[im]; }
+  if (S.demo) { S.imgs[im] = await new Promise(res => { const i = new Image(); i.onload = () => res(`preview-img/${im}.webp`); i.onerror = () => res(null); i.src = `preview-img/${im}.webp`; }); return S.imgs[im]; }
+  try { const d = await db.collection('qimg').doc(im).get(); S.imgs[im] = d.exists ? d.data().d : null; } catch (e) { S.imgs[im] = null; }
+  return S.imgs[im];
+}
+
+function plain(t) { return esc(t).replace(/[A-Za-z0-9][A-Za-z0-9+\-−×÷=<>≤≥≠()\[\].,/^²³√%°'πσ| ]*[A-Za-z0-9)\]²³°%]|[A-Za-z0-9]/g, m => `<span dir="ltr">${m}</span>`); }
+function rich(t) { return String(t ?? '').split(/(\$[^$]+\$)/).map(p => p.length > 2 && p[0] === '$' && p.endsWith('$') ? `<span class="tx" data-t="${esc(p.slice(1, -1))}"></span>` : plain(p)).join(''); }
+function tex(el) {
+  if (!window.katex) { el.querySelectorAll('[data-t]').forEach(s => { if (!s.textContent) s.textContent = s.dataset.t; }); return; }
+  el.querySelectorAll('[data-t]').forEach(s => { if (s.dataset.done) return; try { katex.render(s.dataset.t, s, { throwOnError: false, displayMode: s.classList.contains('dm') }); } catch (e) { s.textContent = s.dataset.t; } s.dataset.done = 1; });
+}
+function solHTML(items) {
+  return items.map(it => `<div class="it"><div class="itn">${esc(it.n)}</div><div>
+    <div class="st">${it.s.map(([m, r]) => `<div class="mth" data-t="${esc(m)}"></div><div class="why">${r}</div>`).join('')}</div>
+    <div class="ans"><b>الإجابة:</b> ${it.a}</div>${it.o ? `<div class="nt">${it.o}</div>` : ''}</div></div>`).join('');
+}
+
+function renderBar() {
+  const w = $('#who'), lb = $('#loginBtn'), sb = $('#subBtn');
+  if (S.user) {
+    const tag = S.admin ? '<span class="badge">مشرف</span>' : (isSub() ? `<span class="badge">مشترك حتى ${S.sub.toLocaleDateString('ar-JO')}</span>` : '');
+    w.innerHTML = `${esc(S.user.displayName || S.user.email || '')} ${tag}` + (S.admin ? ' <a href="admin.html">لوحة التحكم</a>' : '');
+    lb.textContent = 'خروج';
+  } else { w.textContent = ''; lb.textContent = 'تسجيل الدخول'; }
+  sb.hidden = STATIC || !S.solOn || isSub() || S.admin;
+}
+$('#loginBtn').onclick = async () => {
+  if (S.demo) { S.user = S.user ? null : { displayName: 'طالب تجريبي', email: 'demo' }; if (!S.user) S.sub = null; renderBar(); render(); return; }
+  if (S.user) return auth.signOut();
+  try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); } catch (e) { console.warn(e) }
+};
+let plan = (C.plans || [])[1] || (C.plans || [])[0];
+function openSub() {
+  if (!S.user) { if (S.demo) { S.user = { displayName: 'طالب تجريبي', email: 'demo' }; renderBar(); } else { $('#loginBtn').click(); return; } }
+  const code = S.user.uid ? S.user.uid.slice(0, 6).toUpperCase() : 'DEMO01';
+  $('#plans').innerHTML = (C.plans || []).map(p => `<button type="button" class="plan" data-id="${p.id}" aria-pressed="${p.id === plan.id}"><div>${esc(p.name)}</div><div class="p">${p.price} د.أ</div></button>`).join('');
+  $('#plans').querySelectorAll('.plan').forEach(b => b.onclick = () => { plan = C.plans.find(p => p.id === b.dataset.id); openSub(); });
+  const cq = C.cliq || {};
+  $('#cliqBox').innerHTML = `حوّل <b>${plan.price} دينار</b> عبر CliQ إلى الاسم المستعار <code>${esc(cq.alias || '')}</code> (${esc(cq.name || '')}${cq.bank ? '، ' + esc(cq.bank) : ''}).<br>اكتب في ملاحظة التحويل الرمز <code>${code}</code>. يُفعَّل الاشتراك بعد التحقق، عادةً خلال 24 ساعة.`;
+  $('#subMsg').innerHTML = '';
+  if (!$('#subDlg').open) $('#subDlg').showModal();
+}
+$('#subBtn').onclick = openSub;
+$('#subClose').onclick = () => $('#subDlg').close();
+$('#subForm').addEventListener('submit', async ev => {
+  ev.preventDefault(); const name = $('#payName').value.trim(); if (!name) return;
+  if (S.demo) { S.sub = new Date(Date.now() + plan.days * 864e5); $('#subMsg').innerHTML = '<span class="ok">وصل طلبك. في المعاينة يُفعَّل فورًا؛ بعد الربط تفعّله من لوحة التحكم.</span>'; renderBar(); render(); return; }
+  $('#paySend').disabled = true;
+  try {
+    await db.collection('payments').add({ uid: S.user.uid, email: S.user.email || '', payer: name, ref: $('#payRef').value.trim(), plan: plan.id, price: plan.price, days: plan.days,
+      code: S.user.uid.slice(0, 6).toUpperCase(), status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    $('#subMsg').innerHTML = '<span class="ok">وصل طلبك. سنفعّل اشتراكك بعد التحقق من التحويل.</span>';
+  } catch (e) { $('#subMsg').innerHTML = '<span class="err">لم يُرسل الطلب. سجّل الدخول ثم حاول مرة أخرى.</span>'; }
+  $('#paySend').disabled = false;
+});
+
+function adSlot() {
+  if (isSub() || S.admin) return '';
+  const a = C.adsense || {};
+  if (STATIC && !(a.client && a.slot)) return '';
+  if (a.client && a.slot) return `<ins class="adsbygoogle" style="display:block" data-ad-client="${esc(a.client)}" data-ad-slot="${esc(a.slot)}" data-ad-format="auto" data-full-width-responsive="true"></ins>`;
+  return S.demo ? '<div class="ad">مساحة إعلانية</div>' : '';
+}
+function pushAds() { if (window.adsbygoogle) document.querySelectorAll('ins.adsbygoogle:not([data-adsbygoogle-status])').forEach(() => { try { (adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { } }); }
+
+function setNav(n) { document.querySelectorAll('[data-nav]').forEach(a => a.setAttribute('aria-current', a.dataset.nav === n ? 'page' : 'false')); document.querySelectorAll('.dd.open').forEach(d => { d.classList.remove('open'); d.firstElementChild.setAttribute('aria-expanded', 'false'); }); }
+function buildMenus() {
+  document.querySelectorAll('.dd').forEach(dd => {
+    const kind = dd.dataset.dd;
+    dd.querySelector('.menu').innerHTML = S.data.grades.map(G => `<a role="menuitem" href="#${kind}-${G.id}"><i style="background:${GC[G.id]}"></i>${GSHORT[G.id]}</a>`).join('');
+    const b = dd.firstElementChild;
+    b.onclick = e => { e.stopPropagation(); const o = !dd.classList.contains('open'); document.querySelectorAll('.dd.open').forEach(d => { d.classList.remove('open'); d.firstElementChild.setAttribute('aria-expanded', 'false'); }); dd.classList.toggle('open', o); b.setAttribute('aria-expanded', String(o)); };
+  });
+  document.addEventListener('click', () => document.querySelectorAll('.dd.open').forEach(d => { d.classList.remove('open'); d.firstElementChild.setAttribute('aria-expanded', 'false'); }));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.dd.open').forEach(d => d.classList.remove('open')); });
+}
+let IDX = null;
+const norm = t => String(t || '').replace(/[\u064B-\u0652\u0640]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase();
+function searchIdx() {
+  if (IDX) return IDX;
+  IDX = S.data.grades.flatMap(lessonsOf).map(x => ({ x, t: norm([x.L.t, x.U.t, GSHORT[x.G.id], ...new Set(x.L.q.map(q => q.sk))].join(' ')) }));
+  return IDX;
+}
+function wireSearch(inp, box) {
+  const run = () => {
+    const q = norm(inp.value.trim()); if (q.length < 2) { box.hidden = true; return; }
+    const words = q.split(/\s+/);
+    const hits = searchIdx().filter(r => words.every(w => r.t.includes(w))).slice(0, 12);
+    box.hidden = false;
+    box.innerHTML = hits.length ? hits.map(({ x }) => `<a href="#n-${x.key}"><i style="background:${GC[x.G.id]}"></i><b>${esc(x.L.t)}</b><small>${GSHORT[x.G.id]} · ${TN[x.T.t]} · الوحدة ${x.U.u}: ${esc(x.U.t)}</small><span>${x.L.q.length} سؤالًا</span></a>`).join('') : '<div class="none">لا نتائج. جرّب كلمة أخرى مثل «المتباينات» أو «التكامل».</div>';
+  };
+  inp.addEventListener('input', run); inp.addEventListener('focus', run);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { const a = box.querySelector('a'); if (a) location.hash = a.getAttribute('href').slice(1); } if (e.key === 'Escape') box.hidden = true; });
+  document.addEventListener('click', e => { if (!box.contains(e.target) && e.target !== inp) box.hidden = true; });
+}
+function gradeStats(G) { let tot = 0, done = 0, ok = 0, pa = 0, no = 0; for (const x of lessonsOf(G)) { const s = lessonStats(x.key, x.L); tot += s.total; done += s.done; ok += s.ok; pa += s.pa; no += s.no; } return { total: tot, done, ok, pa, no }; }
+
+function viewHome() {
+  setNav(''); setGC(null);
+  const all = S.data.grades.flatMap(lessonsOf);
+  const nq = all.reduce((a, x) => a + x.L.q.length, 0);
+  const courses = S.data.grades.map(G => { const st = gradeStats(G); return `<a class="course" href="#g-${G.id}" style="--gc:${GC[G.id]}" data-n="${G.id.replace('B', '')}"><b>${GSHORT[G.id]}</b><span>${lessonsOf(G).length} درسًا · ${st.total} سؤالًا</span>${st.done ? pbar(st) : ''}</a>`; }).join('');
+  $('#app').innerHTML = `<section class="heroband"><div class="wrap">
+      <h1>رياضيات المنهاج الأردني، <em>مرتّبة لتراجع بذكاء</em></h1>
+      <p>ملخصات لكل درس، وأسئلة الكتاب مصنّفة من السهل إلى التحدّي مع الحل النموذجي، واختبارات تبنيها بنفسك، ولوحة تبيّن أين تحتاج المراجعة.</p>
+      <div class="search"><input id="q" type="search" placeholder="ابحث عن درس أو مهارة… مثل: قاعدة السلسلة، المتباينات، الربيعيات" aria-label="ابحث عن درس أو مهارة" autocomplete="off"><div class="results" id="qr" hidden></div></div>
+      <div class="qstats"><div><b>${S.data.grades.length}</b><span>صفوف ومسارات</span></div><div><b>${all.length}</b><span>درسًا بملخص</span></div><div><b>${nq.toLocaleString('ar-JO')}</b><span>سؤالًا مصنّفًا</span></div></div>
+    </div></section>
+    <div class="wrap pull"><div class="courses">${courses}</div>
+    <section class="sec"><h2>أدوات المراجعة</h2><div class="tools">
+      <a class="tool" href="#notes"><i style="background:var(--g11)">م</i><b>الملخصات</b><span>القواعد والتعريفات وأمثلة محلولة لكل درس، مع الأخطاء الشائعة.</span></a>
+      <a class="tool" href="#questions"><i style="background:var(--g10)">س</i><b>أسئلة التدريب</b><span>أسئلة كتاب الطالب وكتاب التمارين حسب المستوى، مع تصحيح ذاتي.</span></a>
+      <a class="tool" href="#test"><i style="background:var(--g8)">ا</i><b>اختبار مخصّص</b><span>اختر الدروس والمستوى والوقت، وابدأ اختبارًا مؤقّتًا.</span></a>
+      <a class="tool" href="#progress"><i style="background:var(--g9)">ق</i><b>نقاط القوة والضعف</b><span>نسبة إتقانك لكل درس، وأين تبدأ المراجعة.</span></a>
+    </div></section>
+    <section class="sec"><h2>قريبًا</h2><div class="courses">${['الأول','الثاني','الثالث','الرابع','الخامس','السادس','السابع'].map(n => `<div class="course off" aria-disabled="true"><b>الصف ${n}</b><span>قريبًا</span></div>`).join('')}</div></section></div>`;
+  wireSearch($('#q'), $('#qr'));
+}
+
+function viewCourse(gid, mode) {
+  const G = G_(gid); S.grade = G.id; store.set('jm_grade', G.id);
+  setNav(mode || ''); setGC(G.id);
+  const T = G.terms.find(t => t.t === S.term) || G.terms[0]; S.term = T.t;
+  const st = gradeStats(G);
+  const units = T.units.map((U, ui) => {
+    const ls = U.l.map(L => {
+      const key = `${G.id}-${T.t}-${U.u}-${L.n}`; const s = lessonStats(key, L);
+      return `<div class="lrow"><div class="lt">${L.n}. ${esc(L.t)}<small>${L.q.length} سؤالًا${s.done ? ` · أنجزت ${s.done}` : ''}</small></div>
+        <div class="acts"><a class="btn ghost" href="#n-${key}">الملخص</a><a class="btn" href="#q-${key}">الأسئلة</a></div>${pbar(s)}</div>`;
+    }).join('');
+    const us = U.l.reduce((a, L) => { const s = lessonStats(`${G.id}-${T.t}-${U.u}-${L.n}`, L); a.t += s.total; a.d += s.done; return a; }, { t: 0, d: 0 });
+    return `<details class="unit" ${ui === 0 || mode ? 'open' : ''}><summary><span class="un">الوحدة ${U.u}</span><span class="ut">${esc(U.t)}</span><span class="pct">${us.d}/${us.t}</span></summary>${ls}</details>`;
+  }).join('');
+  $('#app').innerHTML = `<div class="wrap">
+    <div class="chead"><div><div class="crumb"><a href="#home">الرئيسية</a> · ${mode === 'notes' ? 'الملخصات' : mode === 'questions' ? 'أسئلة التدريب' : 'الصف'}</div><h1>${GSHORT[G.id]}</h1></div>
+      <div class="tabs" role="group" aria-label="الصف">${S.data.grades.map(x => `<a href="#${mode ? mode + '-' : 'g-'}${x.id}" aria-current="${x.id === G.id ? 'page' : 'false'}">${GSHORT[x.id].replace('التوجيهي – ', 'توجيهي ')}</a>`).join('')}</div></div>
+    <div class="tabs" style="margin-bottom:14px">${G.terms.map(x => `<button data-term="${x.t}" aria-pressed="${x.t === T.t}">${TN[x.t]}</button>`).join('')}</div>
+    <div class="cgrid"><div>${units}</div>
+      <aside class="side">
+        <div class="card"><h3>تقدّمك في ${GSHORT[G.id]}</h3><p>أنجزت ${st.done} من ${st.total} سؤالًا.</p>${pbar(st)}
+          <div class="legend" style="margin-top:8px"><span><i style="background:var(--easy)"></i>صحيح</span><span><i style="background:var(--med)"></i>جزئيًا</span><span><i style="background:var(--hard)"></i>خطأ</span></div></div>
+        <div class="card"><h3>اختبار مخصّص</h3><p>اختر دروسًا من هذا الصف والمستوى والوقت.</p><a class="btn pri" href="#test">ابنِ اختبارًا</a></div>
+        <div class="card"><h3>نقاط القوة والضعف</h3><p>أضعف دروسك أولًا، مع روابط المراجعة.</p><a class="btn" href="#progress">افتح اللوحة</a></div>
+        ${adSlot()}
+      </aside></div></div>`;
+  document.querySelectorAll('[data-term]').forEach(b => b.onclick = () => { S.term = b.dataset.term; viewCourse(gid, mode); });
+  pushAds();
+}
+
+function lessonToc(f, kind) {
+  const { G, T } = f;
+  return `<nav class="card toc" aria-label="دروس ${TN[T.t]}"><h3>${GSHORT[G.id]} · ${TN[T.t]}</h3>${T.units.map(U => `<h4>الوحدة ${U.u}: ${esc(U.t)}</h4>${U.l.map(L => { const k = `${G.id}-${T.t}-${U.u}-${L.n}`; return `<a href="#${kind}-${k}" aria-current="${k === f.key}">${L.n}. ${esc(L.t)}</a>`; }).join('')}`).join('')}</nav>`;
+}
+function neighbours(f) { const all = lessonsOf(f.G); const i = all.findIndex(x => x.key === f.key); return [all[i - 1], all[i + 1]]; }
+function lessonHead(f, kind) {
+  const { G, T, U, L } = f;
+  return `<div class="lhead"><div class="crumb"><a href="#home">الرئيسية</a> · <a href="#g-${G.id}">${GSHORT[G.id]}</a> · ${TN[T.t]} · الوحدة ${U.u}: ${esc(U.t)}</div>
+    <h1>الدرس ${L.n}: ${esc(L.t)}</h1>
+    <div class="tabs"><a href="#n-${f.key}" aria-current="${kind === 'n' ? 'page' : 'false'}">الملخص</a><a href="#q-${f.key}" aria-current="${kind === 'q' ? 'page' : 'false'}">أسئلة التدريب (${L.q.length})</a></div></div>`;
+}
+function mistakesBox(L) {
+  if (!L.m || !L.m.length) return '';
+  return `<div class="mist"><h3>أخطاء شائعة في هذا الدرس</h3><ul>${L.m.map(m => `<li>${m.h.replace(/<span class=m dir=ltr>/g, '<span class="mm" dir="ltr">')}${m.tm ? '<span class="tm">TIMSS</span>' : ''}</li>`).join('')}</ul></div>`;
+}
+function noteBlocks(n) {
+  if (!n) return '<div class="empty">الملخص غير متوفر بعد.</div>';
+  return `<div class="note"><p class="ov">${rich(n.overview)}</p>${(n.blocks || []).map(b => {
+    if (b.t === 'h') return `<h3>${rich(b.x)}</h3>`;
+    if (b.t === 'p') return `<p>${rich(b.x)}</p>`;
+    if (b.t === 'def') return `<div class="def"><b>${rich(b.term)}:</b> ${rich(b.x)}</div>`;
+    if (b.t === 'list') return `<ul>${(b.items || []).map(i => `<li>${rich(i)}</li>`).join('')}</ul>`;
+    if (b.t === 'formula') return `<div class="fml">${b.label ? `<span class="fl">${rich(b.label)}</span>` : ''}<span class="ft dm" data-t="${esc(b.tex)}"></span>${b.x ? `<span>${rich(b.x)}</span>` : ''}</div>`;
+    if (b.t === 'example') return `<div class="ex"><div class="eq">${rich(b.q)}</div><div class="st">${(b.steps || []).map(([m, r]) => `<div class="mth" data-t="${esc(m)}"></div><div style="font-size:13.5px;color:var(--muted)">${rich(r)}</div>`).join('')}</div><div style="margin-top:6px"><b>الإجابة:</b> ${rich(b.a)}</div></div>`;
+    if (b.t === 'tip') return `<div class="tip">${rich(b.x)}</div>`;
+    return '';
+  }).join('')}</div>`;
+}
+async function viewNotes(key) {
+  const f = findLesson(key); if (!f) return viewCourse(S.grade, 'notes');
+  setNav('notes'); setGC(f.G.id); S.grade = f.G.id; S.term = f.T.t; store.set('jm_grade', f.G.id);
+  const [prev, next] = neighbours(f);
+  $('#app').innerHTML = `<div class="wrap">${lessonHead(f, 'n')}<div class="lgrid"><div id="nb"><div class="empty">جارٍ تحميل الملخص…</div></div><aside>${lessonToc(f, 'n')}</aside></div></div>`;
+  const notes = await loadNotes(f.G.id);
+  if (location.hash.slice(1) !== 'n-' + key) return;
+  $('#nb').innerHTML = noteBlocks(notes[key]) + mistakesBox(f.L) + `<div style="margin-top:16px;max-width:76ch">${adSlot()}</div>`
+    + `<div class="pn">${prev ? `<a class="btn" href="#n-${prev.key}">→ ${esc(prev.L.t)}</a>` : '<span></span>'}<a class="btn pri" href="#q-${key}">تدرّب على أسئلة الدرس</a>${next ? `<a class="btn" href="#n-${next.key}">${esc(next.L.t)} ←</a>` : '<span></span>'}</div>`;
+  tex($('#nb')); pushAds();
+}
+
+function qCard(f, q, i, num, opts = {}) {
+  const [ln, lc] = LVN[q.lv]; const p = (S.prog[f.key] || {})[q.im];
+  const id = `${f.key}:${i}`, opened = S.open.has(id);
+  const solBtn = canSol() ? `<button class="btn" data-sol="${id}" aria-expanded="${opened}">${opened ? 'إخفاء الحل' : 'الحل النموذجي'}</button>`
+    : S.solOn ? `<button class="btn" data-subq>الحل للمشتركين</button>` : `<span class="lock">الحلول قريبًا</span>`;
+  return `<article class="q ${lc}"><div class="qh"><span class="qn">سؤال ${num}</span><span class="pill">${ln}</span>
+      <span class="qref">${BK[q.b]} · ص ${q.p} · س ${esc(q.q)}${q.pt === 2 ? ' (تابع)' : ''}</span>${opts.lesson ? `<span class="qref">· ${esc(opts.lesson)}</span>` : ''}<span class="qsk">${esc(q.sk)}</span></div>
+    <div class="qb">${canQ() ? `<div class="qimg" data-im="${q.im}"><div class="qph">جارٍ تحميل السؤال…</div></div>` : `<div class="qph">افتح ${BK[q.b]} صفحة ${q.p}، السؤال ${esc(q.q)}.</div>`}
+      ${opened ? `<div class="sol hw" data-solbox="${id}">جارٍ تحميل الحل…</div>` : ''}</div>
+    <div class="qf">${solBtn}<span class="spacer"></span><span class="lbl">كيف كان حلّك؟</span>
+      <button class="mk" data-mk="${f.key}|${q.im}" data-v="1" aria-pressed="${p === 1}">صحيح</button>
+      <button class="mk" data-mk="${f.key}|${q.im}" data-v="0.5" aria-pressed="${p === .5}">جزئيًا</button>
+      <button class="mk" data-mk="${f.key}|${q.im}" data-v="0" aria-pressed="${p === 0}">خطأ</button></div></article>`;
+}
+function hydrateQs(root) {
+  root.querySelectorAll('.qimg[data-im]').forEach(async el => { const src = await loadImg(el.dataset.im); el.innerHTML = src ? `<img src="${src}" alt="السؤال من الكتاب" loading="lazy">` : '<div class="qph">صورة السؤال غير متوفرة بعد.</div>'; });
+  root.querySelectorAll('[data-solbox]').forEach(async el => {
+    const [key, i] = el.dataset.solbox.split(':');
+    try { const s = await loadSol(key); el.innerHTML = s && s[i] ? solHTML(s[i]) : 'الحل غير متوفر بعد.'; tex(el); } catch (e) { el.textContent = 'تعذّر تحميل الحل.'; }
+  });
+  root.querySelectorAll('[data-sol]').forEach(b => b.onclick = () => { const id = b.dataset.sol; S.open.has(id) ? S.open.delete(id) : S.open.add(id); render(); });
+  root.querySelectorAll('[data-subq]').forEach(b => b.onclick = openSub);
+  root.querySelectorAll('[data-mk]').forEach(b => b.onclick = () => {
+    const [key, im] = b.dataset.mk.split('|'); mark(key, im, +b.dataset.v);
+    const v = (S.prog[key] || {})[im];
+    b.parentElement.querySelectorAll('[data-mk]').forEach(x => x.setAttribute('aria-pressed', String(+x.dataset.v === v)));
+    if (S.run && location.hash === '#run') runDots();
+  });
+}
+function viewQuestions(key) {
+  const f = findLesson(key); if (!f) return viewCourse(S.grade, 'questions');
+  setNav('questions'); setGC(f.G.id); S.grade = f.G.id; S.term = f.T.t; store.set('jm_grade', f.G.id);
+  const L = f.L; const cnt = k => L.q.filter(q => q.lv === k).length;
+  const order = L.q.map((q, i) => ({ q, i })).filter(x => S.lv === 'all' || x.q.lv === S.lv)
+    .sort((a, b) => LV.findIndex(l => l[0] === a.q.lv) - LV.findIndex(l => l[0] === b.q.lv));
+  const st = lessonStats(key, L);
+  let body = '', n = 0;
+  for (const x of order) { body += qCard(f, x.q, x.i, ++n); if (n % 5 === 0) body += adSlot(); }
+  const [prev, next] = neighbours(f);
+  $('#app').innerHTML = `<div class="wrap">${lessonHead(f, 'q')}<div class="lgrid"><div>
+      <div class="filters"><button class="lv all" data-lv="all" aria-pressed="${S.lv === 'all'}">الكل ${L.q.length}</button>
+      ${LV.map(([k, nm, c]) => cnt(k) ? `<button class="lv ${c}" data-lv="${k}" aria-pressed="${S.lv === k}">${nm} ${cnt(k)}</button>` : '').join('')}</div>
+      <div class="qs">${body || '<div class="empty">لا أسئلة بهذا المستوى.</div>'}</div>
+      <div class="pn">${prev ? `<a class="btn" href="#q-${prev.key}">→ ${esc(prev.L.t)}</a>` : '<span></span>'}${next ? `<a class="btn" href="#q-${next.key}">${esc(next.L.t)} ←</a>` : '<span></span>'}</div>
+    </div><aside class="side"><div class="card"><h3>تقدّمك في الدرس</h3><p>أنجزت ${st.done} من ${st.total}${st.score !== null ? ` · الإتقان ${Math.round(st.score * 100)}%` : ''}.</p>${pbar(st)}<p style="margin-top:10px"><a href="#n-${key}">راجع الملخص أولًا</a></p></div>${lessonToc(f, 'q')}</aside></div></div>`;
+  document.querySelectorAll('[data-lv]').forEach(b => b.onclick = () => { S.lv = b.dataset.lv; viewQuestions(key); });
+  hydrateQs($('#app')); pushAds();
+}
+
+function viewTest() {
+  setNav('test'); setGC(null);
+  const G = G_(S.grade);
+  const T = G.terms.find(t => t.t === S.term) || G.terms[0];
+  let sel = []; try { sel = JSON.parse(store.get('jm_tsel') || '[]') } catch (e) { }
+  sel = new Set(sel.filter(k => k.startsWith(G.id + '-' + T.t + '-')));
+  $('#app').innerHTML = `<div class="wrap"><div class="chead"><div><div class="crumb"><a href="#home">الرئيسية</a> · اختبار مخصّص</div><h1>ابنِ اختبارك</h1></div></div>
+    <div class="tb"><form id="tform" class="card">
+      <div class="field"><b>الصف والفصل</b><div class="row"><select id="tg" aria-label="الصف">${S.data.grades.map(x => `<option value="${x.id}" ${x.id === G.id ? 'selected' : ''}>${GSHORT[x.id]}</option>`).join('')}</select>
+        <select id="tt" aria-label="الفصل">${G.terms.map(x => `<option value="${x.t}" ${x.t === T.t ? 'selected' : ''}>${TN[x.t]}</option>`).join('')}</select></div></div>
+      <div class="field"><b>الدروس</b><div class="ulist">${T.units.map(U => `<h4><label><input type="checkbox" data-unit="${U.u}"> الوحدة ${U.u}: ${esc(U.t)}</label></h4>${U.l.map(L => { const k = `${G.id}-${T.t}-${U.u}-${L.n}`; return `<label><input type="checkbox" name="ls" value="${k}" data-u="${U.u}" ${sel.has(k) ? 'checked' : ''}> ${L.n}. ${esc(L.t)}</label>`; }).join('')}`).join('')}</div></div>
+      <div class="field"><b>المستوى</b><div class="chk">${LV.map(([k, n]) => `<label><input type="checkbox" name="lv" value="${k}" checked> ${n}</label>`).join('')}</div></div>
+      <div class="field"><b>عدد الأسئلة</b><div class="chk">${[5, 10, 15, 20].map(n => `<label><input type="radio" name="n" value="${n}" ${n === 10 ? 'checked' : ''}> ${n}</label>`).join('')}</div></div>
+      <div class="field"><b>الوقت</b><div class="chk">${[[0, 'بلا وقت'], [15, '15 دقيقة'], [30, '30 دقيقة'], [45, '45 دقيقة']].map(([v, n]) => `<label><input type="radio" name="tm" value="${v}" ${v === 30 ? 'checked' : ''}> ${n}</label>`).join('')}</div></div>
+      <div class="field chk"><label><input type="checkbox" id="weak"> ركّز على الأسئلة التي لم أحلّها أو أخطأت فيها</label></div>
+      <div class="row"><button class="btn pri" type="submit">ابدأ الاختبار</button><span id="tmsg" class="err"></span></div>
+    </form>
+    <aside class="side"><div class="card"><h3>كيف يعمل؟</h3><p>يختار الموقع أسئلة عشوائية من الدروس والمستويات التي حدّدتها. تحلّ على ورقتك، ثم تقيّم كل سؤال بنفسك، وفي النهاية ترى نتيجتك وأضعف دروسك.</p></div>${adSlot()}</aside></div></div>`;
+  $('#tg').onchange = e => { S.grade = e.target.value; S.term = 't1'; viewTest(); };
+  $('#tt').onchange = e => { S.term = e.target.value; viewTest(); };
+  document.querySelectorAll('[data-unit]').forEach(c => c.onchange = () => document.querySelectorAll(`input[data-u="${c.dataset.unit}"]`).forEach(x => x.checked = c.checked));
+  $('#tform').onsubmit = ev => {
+    ev.preventDefault();
+    const ls = [...document.querySelectorAll('input[name=ls]:checked')].map(x => x.value);
+    const lvs = new Set([...document.querySelectorAll('input[name=lv]:checked')].map(x => x.value));
+    const n = +document.querySelector('input[name=n]:checked').value, tm = +document.querySelector('input[name=tm]:checked').value;
+    if (!ls.length) { $('#tmsg').textContent = 'اختر درسًا واحدًا على الأقل.'; return; }
+    store.set('jm_tsel', JSON.stringify(ls));
+    let pool = [];
+    for (const k of ls) { const f = findLesson(k); f.L.q.forEach((q, i) => { if (lvs.has(q.lv)) pool.push({ key: k, i }); }); }
+    if ($('#weak').checked) { const w = pool.filter(x => { const v = (S.prog[x.key] || {})[findLesson(x.key).L.q[x.i].im]; return v === undefined || v < 1; }); if (w.length) pool = w; }
+    if (!pool.length) { $('#tmsg').textContent = 'لا أسئلة تطابق اختيارك.'; return; }
+    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+    S.run = { items: pool.slice(0, n), idx: 0, end: tm ? Date.now() + tm * 60000 : null, done: false, start: Date.now() };
+    location.hash = 'run';
+  };
+  pushAds();
+}
+function runDots() {
+  const r = S.run; const el = $('#dots'); if (!el || !r) return;
+  el.innerHTML = r.items.map((x, i) => { const f = findLesson(x.key); const v = (S.prog[x.key] || {})[f.L.q[x.i].im]; const c = v === 1 ? 'd1' : v === .5 ? 'd5' : v === 0 ? 'd0' : ''; return `<button class="${c}" data-go="${i}" aria-current="${i === r.idx}" aria-label="سؤال ${i + 1}">${i + 1}</button>`; }).join('');
+  el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => { r.idx = +b.dataset.go; viewRun(); });
+}
+function viewRun() {
+  setNav('test'); setGC(null); const r = S.run;
+  if (!r) { location.hash = 'test'; return; }
+  if (r.done) return viewResult();
+  const x = r.items[r.idx]; const f = findLesson(x.key); const q = f.L.q[x.i];
+  if (!r.reveal) S.open.delete(`${x.key}:${x.i}`);
+  $('#app').innerHTML = `<div class="wrap"><div class="runbar"><b>سؤال ${r.idx + 1} من ${r.items.length}</b><span class="timer" id="timer"></span><span class="spacer"></span><button class="btn" id="finish">${r.reveal ? 'العودة للنتيجة' : 'إنهاء الاختبار'}</button></div>
+    <div class="dots" id="dots" style="margin-bottom:12px"></div>
+    <div class="qs">${r.reveal ? qCard(f, q, x.i, r.idx + 1, { lesson: f.L.t }) : qCard(f, q, x.i, r.idx + 1, { lesson: f.L.t }).replace(/<button class="btn" data-sol[^>]*>[^<]*<\/button>|<button class="btn" data-subq>[^<]*<\/button>|<span class="lock">[^<]*<\/span>/, '<span class="lock">الحل يظهر بعد إنهاء الاختبار</span>')}</div>
+    <div class="pn"><button class="btn" id="prev" ${r.idx ? '' : 'disabled'}>→ السابق</button><button class="btn pri" id="next">${r.idx < r.items.length - 1 ? 'التالي ←' : 'النتيجة'}</button></div></div>`;
+  runDots(); hydrateQs($('#app'));
+  $('#prev').onclick = () => { r.idx--; viewRun(); };
+  $('#next').onclick = () => { if (r.idx < r.items.length - 1) { r.idx++; viewRun(); } else { r.done = true; viewResult(); } };
+  $('#finish').onclick = () => { r.done = true; viewResult(); };
+  clearInterval(S.tick);
+  const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  const tick = () => { const t = $('#timer'); if (!t) return clearInterval(S.tick); if (r.reveal) { t.textContent = ''; return; }
+    if (!r.end) { t.textContent = fmt(Math.floor((Date.now() - r.start) / 1000)); return; }
+    const s = Math.max(0, Math.floor((r.end - Date.now()) / 1000)); t.textContent = fmt(s); t.classList.toggle('low', s < 60); if (!s) { r.done = true; clearInterval(S.tick); viewResult(); } };
+  tick(); S.tick = setInterval(tick, 1000);
+}
+function viewResult() {
+  clearInterval(S.tick); const r = S.run; setNav('test'); setGC(null);
+  if (!r.mins) r.mins = Math.max(1, Math.round((Date.now() - r.start) / 60000));
+  let sum = 0, done = 0; const per = {};
+  r.items.forEach(x => { const f = findLesson(x.key); const v = (S.prog[x.key] || {})[f.L.q[x.i].im]; per[x.key] = per[x.key] || { f, s: 0, n: 0, d: 0 }; per[x.key].n++; if (v !== undefined) { sum += v; done++; per[x.key].s += v; per[x.key].d++; } });
+  const pct = Math.round(sum / r.items.length * 100);
+  const rows = Object.values(per).sort((a, b) => (a.d ? a.s / a.d : -1) - (b.d ? b.s / b.d : -1)).map(p => { const sc = p.d ? p.s / p.d : null; const [lab, cl] = strength({ done: p.d, score: sc });
+    return `<tr><td>${esc(p.f.L.t)}</td><td class="num">${p.d}/${p.n}</td><td><span class="str ${cl}">${lab}</span></td><td><a href="#n-${p.f.key}">الملخص</a> · <a href="#q-${p.f.key}">الأسئلة</a></td></tr>`; }).join('');
+  $('#app').innerHTML = `<div class="wrap"><div class="chead"><div><div class="crumb"><a href="#test">اختبار مخصّص</a> · النتيجة</div><h1>نتيجة الاختبار</h1></div><div class="row"><button class="btn" id="review">راجع الأسئلة والحلول</button><a class="btn pri" href="#test">اختبار جديد</a></div></div>
+    <div class="score"><div><b>${pct}%</b><span>الدرجة حسب تقييمك</span></div><div><b>${done}/${r.items.length}</b><span>أسئلة قيّمتها</span></div><div><b>${r.mins}</b><span>دقيقة</span></div></div>
+    ${done < r.items.length ? '<p class="crumb">الأسئلة التي لم تقيّمها تُحسب صفرًا في الدرجة.</p>' : ''}
+    <h2 style="font-size:18px">حسب الدرس</h2><div class="tbl"><table><thead><tr><th>الدرس</th><th>قيّمت</th><th>المستوى</th><th>راجع</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  $('#review').onclick = () => { r.done = false; r.reveal = true; r.idx = 0; viewRun(); };
+}
+
+function viewProgress() {
+  setNav('progress'); setGC(null);
+  const G = G_(S.grade); const all = lessonsOf(G).map(x => ({ ...x, st: lessonStats(x.key, x.L) }));
+  const started = all.filter(x => x.st.done);
+  const weak = started.slice().sort((a, b) => a.st.score - b.st.score).slice(0, 5);
+  const gs = gradeStats(G); const dn = started.reduce((a, x) => a + x.st.done, 0);
+  const score = dn ? Math.round(started.reduce((a, x) => a + x.st.score * x.st.done, 0) / dn * 100) : 0;
+  const rows = all.slice().sort((a, b) => (a.st.done ? a.st.score : 2) - (b.st.done ? b.st.score : 2)).map(x => { const [lab, cl] = strength(x.st);
+    return `<tr><td>${TN[x.T.t]} · الوحدة ${x.U.u}</td><td>${esc(x.L.t)}</td><td class="num">${x.st.done}/${x.st.total}</td><td class="num">${x.st.done ? Math.round(x.st.score * 100) + '%' : '—'}</td><td><span class="str ${cl}">${lab}</span></td><td><a href="#n-${x.key}">الملخص</a> · <a href="#q-${x.key}">الأسئلة</a></td></tr>`; }).join('');
+  $('#app').innerHTML = `<div class="wrap"><div class="chead"><div><div class="crumb"><a href="#home">الرئيسية</a> · نقاط القوة والضعف</div><h1>نقاط القوة والضعف</h1></div>
+      <div class="tabs">${S.data.grades.map(x => `<button data-g="${x.id}" aria-pressed="${x.id === G.id}">${GSHORT[x.id].replace('التوجيهي – ', 'توجيهي ')}</button>`).join('')}</div></div>
+    ${S.user ? '' : `<p class="crumb" style="margin-top:0">تقدّمك محفوظ على هذا الجهاز${STATIC ? '' : '. سجّل الدخول ليُحفظ في حسابك ويظهر على كل أجهزتك'}.</p>`}
+    <div class="score"><div><b>${score}%</b><span>متوسط الإتقان</span></div><div><b>${gs.done}/${gs.total}</b><span>أسئلة قيّمتها</span></div><div><b>${started.length}/${all.length}</b><span>دروس بدأتها</span></div></div>
+    ${started.length ? `<div class="card" style="margin-bottom:14px"><h3>ابدأ مراجعتك من هنا</h3><p>أضعف ${weak.length} دروس حسب تقييمك:</p><div class="row">${weak.map(x => `<a class="btn" href="#n-${x.key}">${esc(x.L.t)} · ${Math.round(x.st.score * 100)}%</a>`).join('')}</div></div>`
+      : `<div class="card" style="margin-bottom:14px"><h3>لم تبدأ بعد</h3><p>حلّ أسئلة أي درس وقيّم نفسك بـ «صحيح / جزئيًا / خطأ»، وستظهر نقاط قوتك وضعفك هنا.</p><a class="btn pri" href="#questions">ابدأ التدريب</a></div>`}
+    <div class="tbl"><table><thead><tr><th>الوحدة</th><th>الدرس</th><th>قيّمت</th><th>الإتقان</th><th>المستوى</th><th>راجع</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+  document.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { S.grade = b.dataset.g; store.set('jm_grade', S.grade); viewProgress(); });
+}
+
+function render() {
+  if (!S.data) return;
+  clearInterval(S.tick);
+  const h = location.hash.slice(1) || 'home';
+  let m;
+  if (h === 'home') return viewHome();
+  if ((m = h.match(/^g-(.+)$/))) return viewCourse(m[1]);
+  if (h === 'notes') return viewCourse(S.grade, 'notes');
+  if ((m = h.match(/^notes-(.+)$/))) return viewCourse(m[1], 'notes');
+  if (h === 'questions') return viewCourse(S.grade, 'questions');
+  if ((m = h.match(/^questions-(.+)$/))) return viewCourse(m[1], 'questions');
+  if ((m = h.match(/^n-(.+)$/))) return viewNotes(m[1]);
+  if ((m = h.match(/^q-(.+)$/))) { if (S.lastQ !== m[1]) { S.lv = 'all'; S.lastQ = m[1]; } return viewQuestions(m[1]); }
+  if (h === 'test') return viewTest();
+  if (h === 'run') return viewRun();
+  if (h === 'progress') return viewProgress();
+  viewHome();
+}
+window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
+
+if (C.adsense && C.adsense.client) { const s = document.createElement('script'); s.async = true; s.crossOrigin = 'anonymous'; s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(C.adsense.client); document.head.appendChild(s); }
+if (C.booksUrl) $('#booksLink').href = C.booksUrl;
+fetch('data.json').then(r => r.json()).then(d => { S.data = d; buildMenus(); if (!S.data.grades.find(g => g.id === S.grade)) S.grade = '8'; renderBar(); render(); })
+  .catch(() => { $('#app').innerHTML = '<div class="wrap empty">تعذّر تحميل بيانات الدروس. أعد تحميل الصفحة.</div>'; });
+})();
+</script>
+
+</body>
+</html>
