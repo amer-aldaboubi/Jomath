@@ -349,6 +349,7 @@ body.tool-open .tfab{display:none}
 .mopt{text-align:right;border:1.5px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--sheet);cursor:pointer;font:inherit;color:var(--ink);overflow-x:auto}
 .mopt:hover{border-color:var(--brand-2)}
 .mqq .tx,.mopt .tx,.mans .tx{direction:ltr;unicode-bidi:isolate;display:inline-block}
+[hidden]{display:none!important}
 .gate{min-height:calc(100vh - 64px);display:grid;place-items:center;padding:24px 16px;background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 55%,#2457d6 140%)}
 .gcard{background:var(--sheet);border-radius:20px;max-width:440px;width:100%;padding:30px 26px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35)}
 .gbrand{font:800 34px var(--f-display);color:var(--navy);letter-spacing:.5px}.gbrand b{color:var(--gold)}
@@ -444,8 +445,8 @@ body.locked #app,body.locked .foot,body.locked .nav,body.locked .tfab,body.locke
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.2.0/math.min.js"></script>
-<script src="tools.js?v=3"></script>
-<script src="config.js?v=3"></script>
+<script src="tools.js?v=4"></script>
+<script src="config.js?v=4"></script>
 <script>
 (() => {
 const C = window.JOMATH_CONFIG || {};
