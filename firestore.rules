@@ -52,6 +52,14 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // Feedback: signed-in students send; only the admin reads and manages
+    match /feedback/{id} {
+      allow create: if me() && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'new'
+        && request.resource.data.msg is string && request.resource.data.msg.size() <= 1500
+        && request.resource.data.rating is int && request.resource.data.rating >= 0 && request.resource.data.rating <= 5;
+      allow read, update, delete: if isAdmin();
+    }
     // CliQ payment requests
     match /payments/{id} {
       allow create: if me() && request.resource.data.uid == request.auth.uid

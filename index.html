@@ -350,6 +350,21 @@ body.tool-open .tfab{display:none}
 .mopt:hover{border-color:var(--brand-2)}
 .mqq .tx,.mopt .tx,.mans .tx{direction:ltr;unicode-bidi:isolate;display:inline-block}
 [hidden]{display:none!important}
+.toast{position:fixed;top:76px;left:50%;transform:translateX(-50%);z-index:60;background:var(--navy);color:#fff;border-radius:14px;padding:12px 18px;box-shadow:0 12px 30px rgba(14,26,60,.35);font:600 15px var(--f-body);display:flex;gap:10px;align-items:center;max-width:calc(100vw - 32px)}
+.toast .ti{width:28px;height:28px;border-radius:50%;background:var(--easy);display:grid;place-items:center;flex:none}
+.toast small{display:block;font-weight:400;opacity:.85;font-size:13px}
+@media (prefers-reduced-motion:no-preference){.toast{animation:tin .35s ease-out}@keyframes tin{from{opacity:0;transform:translate(-50%,-12px)}}}
+.fbbtn{margin:6px 0}.lnk{border:0;background:none;color:var(--muted);font:500 12.5px var(--f-body);text-decoration:underline;cursor:pointer;padding:4px}
+.fblbl{font-size:13px;color:var(--muted);margin-bottom:4px}
+.stars{display:flex;gap:4px;direction:ltr;justify-content:flex-end}
+.stars button{border:0;background:none;font-size:30px;line-height:1;cursor:pointer;color:var(--line);padding:0 2px}
+.stars button[aria-checked="true"]{color:var(--gold)}
+#fbMsg,#fbType{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--paper);color:var(--ink);font:inherit}
+.fbctx{background:var(--soft);border-radius:8px;padding:6px 10px;font-size:13px}
+.fbout{font-size:14px;min-height:18px}.fbout.ok{color:var(--easy)}.fbout.err{color:var(--red)}
+.fbl{display:flex;flex-direction:column;gap:10px}.fbi{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.fbi.done{opacity:.6}.fbi .h{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--muted);margin-bottom:6px}
+.fbi .h b{color:var(--ink)}.fbi .m{white-space:pre-wrap;line-height:1.7}.fbi .st{color:var(--gold);letter-spacing:1px}
 .gate{min-height:calc(100vh - 64px);display:grid;place-items:center;padding:24px 16px;background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 55%,#2457d6 140%)}
 .gcard{background:var(--sheet);border-radius:20px;max-width:440px;width:100%;padding:30px 26px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35)}
 .gbrand{font:800 34px var(--f-display);color:var(--navy);letter-spacing:.5px}.gbrand b{color:var(--gold)}
@@ -423,11 +438,22 @@ body.locked #app,body.locked .foot,body.locked .nav,body.locked .tfab,body.locke
 
 <footer class="foot"><div class="wrap">
   <div><b>JOMATH</b> · منصّة مراجعة الرياضيات للمنهاج الأردني · إعداد د. عامر الدبوبي</div>
+  <div><button type="button" class="btn fbbtn" data-fb>ملاحظاتك تهمّنا · أرسل ملاحظة</button></div>
   <div class="stat-live">عدد الطلاب: <b data-stat="users">…</b> · الأسئلة المحلولة: <b data-stat="solved">…</b> · الزيارات: <b data-stat="visits">…</b></div>
   <div><b>© 2026 د. عامر الدبوبي. جميع الحقوق محفوظة.</b> يُمنع نسخ محتوى الموقع (الملخصات، الحلول، الأخطاء الشائعة، تصنيف الأسئلة، التصميم) أو إعادة نشره أو استخدامه تجاريًا دون إذن خطي من المؤلف.</div>
   <div>الأسئلة من كتب الرياضيات الصادرة عن المركز الوطني لتطوير المناهج. الكتب الرسمية: <a id="booksLink" href="https://nccd.gov.jo/Ar/Pages/textbooks" target="_blank" rel="noopener">موقع المركز الوطني لتطوير المناهج</a>.</div>
 </div></footer>
 
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<dialog id="fbDlg"><form class="dlg" id="fbForm" method="dialog">
+  <h3>شاركنا رأيك</h3>
+  <div id="fbCtx" class="fbctx" hidden></div>
+  <div><div class="fblbl">ما تقييمك لـ JOMATH؟</div><div class="stars" id="fbStars" role="radiogroup" aria-label="التقييم"></div></div>
+  <label class="f" for="fbType">نوع الملاحظة<select id="fbType"><option value="idea">اقتراح أو فكرة</option><option value="error">خطأ في سؤال أو حل</option><option value="bug">مشكلة في الموقع</option><option value="praise">شكر وتقدير</option><option value="other">أخرى</option></select></label>
+  <label class="f" for="fbMsg">ملاحظتك<textarea id="fbMsg" rows="4" maxlength="1500" placeholder="اكتب ملاحظتك هنا…"></textarea></label>
+  <div id="fbOut" class="fbout" role="status"></div>
+  <div class="row"><button class="btn pri" id="fbSend" type="button">إرسال</button><button class="btn" type="button" id="fbClose">إغلاق</button></div>
+</form></dialog>
 <dialog id="subDlg"><form class="dlg" id="subForm" method="dialog">
   <h3>الاشتراك في JOMATH</h3>
   <div class="plans" id="plans"></div>
@@ -445,8 +471,8 @@ body.locked #app,body.locked .foot,body.locked .nav,body.locked .tfab,body.locke
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.2.0/math.min.js"></script>
-<script src="tools.js?v=4"></script>
-<script src="config.js?v=4"></script>
+<script src="tools.js?v=5"></script>
+<script src="config.js?v=5"></script>
 <script>
 (() => {
 const C = window.JOMATH_CONFIG || {};
@@ -475,11 +501,13 @@ if (hasFB) {
   auth.getRedirectResult().catch(e => gateErr(e));
   auth.onAuthStateChanged(async u => {
     S.user = u; S.sub = null; S.sols = {}; S.imgs = {}; lockUI();
+    if (u) welcome(u);
     S.admin = !!(u && (C.adminEmails || []).includes(u.email));
     if (u) {
       const ref = db.collection('users').doc(u.uid);
       try {
         const snap = await ref.get();
+        if (!snap.exists) { S.firstLogin = true; welcome(u, true); }
         if (!snap.exists) await ref.set({ email: u.email || '', name: u.displayName || '', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
         else await ref.update({ lastSeen: firebase.firestore.FieldValue.serverTimestamp() });
         ref.onSnapshot(d => { const v = d.data() || {}; S.sub = v.subUntil ? v.subUntil.toDate() : null; renderBar(); render(); });
@@ -584,7 +612,7 @@ function renderBar() {
   const w = $('#who'), lb = $('#loginBtn'), sb = $('#subBtn');
   if (S.user) {
     const tag = S.admin ? '<span class="badge">مشرف</span>' : (isSub() ? `<span class="badge">مشترك حتى ${S.sub.toLocaleDateString('ar-JO')}</span>` : '');
-    w.innerHTML = `${esc(S.user.displayName || S.user.email || '')} ${tag}` + (S.admin ? ' <a href="admin.html">لوحة التحكم</a>' : '');
+    w.innerHTML = `${esc(S.user.displayName || S.user.email || '')} ${tag}` + (S.admin ? ' <a href="#admin">لوحة التحكم</a>' : '');
     lb.textContent = 'خروج';
   } else { w.textContent = ''; lb.textContent = 'تسجيل الدخول'; }
   sb.hidden = STATIC || !S.solOn || isSub() || S.admin;
@@ -787,7 +815,7 @@ function qCard(f, q, i, num, opts = {}) {
     <div class="qb">${q.tl && window.JMT ? `<div class="qneed"><span>تحتاج للحل:</span>${JMT.chips(q.tl)}</div>` : ''}${canQ() ? `<div class="qimg" data-im="${q.im}"><div class="qph">جارٍ تحميل السؤال…</div></div>` : `<div class="qph">افتح ${BK[q.b]} صفحة ${q.p}، السؤال ${esc(q.q)}.</div>`}
       ${S.ansOpen.has(id) ? `<div class="ansbox" data-ansbox="${id}" data-mkk="${f.key}|${q.im}"${opts.noReveal ? ' data-norev="1"' : ''}><div class="qph">جارٍ التحميل…</div></div>` : ''}
       ${opened ? `<div class="sol hw" data-solbox="${id}">جارٍ تحميل الحل…</div>` : ''}</div>
-    <div class="qf">${window.JMT && (STATIC || canSol()) ? `<button class="btn pri" data-ans="${id}" aria-expanded="${S.ansOpen.has(id)}">${S.ansOpen.has(id) ? 'إخفاء مربع الإجابة' : 'أجب وتحقّق'}</button>` : ''}${solBtn}<span class="spacer"></span><span class="lbl">كيف كان حلّك؟</span>
+    <div class="qf">${window.JMT && (STATIC || canSol()) ? `<button class="btn pri" data-ans="${id}" aria-expanded="${S.ansOpen.has(id)}">${S.ansOpen.has(id) ? 'إخفاء مربع الإجابة' : 'أجب وتحقّق'}</button>` : ''}${solBtn}<button type="button" class="lnk" data-fbq="${esc((opts.lesson || f.L.t) + ' · ' + BK[q.b] + ' ص ' + q.p + ' س ' + q.q)}|${q.im}">أبلغ عن خطأ</button><span class="spacer"></span><span class="lbl">كيف كان حلّك؟</span>
       <button class="mk" data-mk="${f.key}|${q.im}" data-v="1" aria-pressed="${p === 1}">صحيح</button>
       <button class="mk" data-mk="${f.key}|${q.im}" data-v="0.5" aria-pressed="${p === .5}">جزئيًا</button>
       <button class="mk" data-mk="${f.key}|${q.im}" data-v="0" aria-pressed="${p === 0}">خطأ</button></div></article>`;
@@ -1034,6 +1062,56 @@ function wireMin(root) {
     card.querySelectorAll('[data-mm]').forEach(b => b.onclick = () => { setP(q.id, +b.dataset.mm); card.querySelectorAll('[data-mm]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); });
   });
 }
+function toast(html, ms) { const t = $('#toast'); t.innerHTML = html; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, ms || 4500); }
+function welcome(u, first) {
+  let k = 'jm_welcomed_' + u.uid; let seen = false; try { seen = sessionStorage.getItem(k); sessionStorage.setItem(k, 1); } catch (e) { }
+  if (seen && !first) return;
+  const nm = esc((u.displayName || u.email || '').split(' ')[0]);
+  toast(`<span class="ti">✓</span><span>${first ? `أهلًا بك في JOMATH يا ${nm}!` : `أهلًا ${nm}، تم تسجيل الدخول بنجاح`}<small>${first ? 'سيُحفظ تقدّمك تلقائيًا في حسابك.' : 'تقدّمك محفوظ في حسابك على أي جهاز.'}</small></span>`, first ? 6500 : 4000);
+}
+let fbRate = 0, fbCtx = null;
+function openFb(ctx) {
+  fbCtx = ctx || null; fbRate = 0;
+  $('#fbStars').innerHTML = [1, 2, 3, 4, 5].map(n => `<button type="button" role="radio" aria-checked="false" aria-label="${n} من 5" data-r="${n}">★</button>`).join('');
+  const paint = () => $('#fbStars').querySelectorAll('[data-r]').forEach(b => b.setAttribute('aria-checked', String(+b.dataset.r <= fbRate)));
+  $('#fbStars').querySelectorAll('[data-r]').forEach(b => b.onclick = () => { fbRate = +b.dataset.r; paint(); });
+  $('#fbCtx').hidden = !fbCtx; if (fbCtx) $('#fbCtx').textContent = 'السؤال: ' + fbCtx.label;
+  $('#fbType').value = fbCtx ? 'error' : 'idea'; $('#fbMsg').value = ''; $('#fbOut').textContent = ''; $('#fbOut').className = 'fbout';
+  $('#fbDlg').showModal(); setTimeout(() => $('#fbMsg').focus(), 50);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-fb],[data-fbq]'); if (!b) return;
+  if (b.dataset.fbq) { const [label, im] = b.dataset.fbq.split('|'); openFb({ label, im, page: location.hash }); } else openFb();
+});
+$('#fbClose').onclick = () => $('#fbDlg').close();
+$('#fbSend').onclick = async () => {
+  const msg = $('#fbMsg').value.trim(), out = $('#fbOut');
+  if (!msg && !fbRate) { out.className = 'fbout err'; out.textContent = 'اكتب ملاحظتك أو اختر تقييمًا أولًا.'; return; }
+  if (!db || !S.user) { out.className = 'fbout err'; out.textContent = 'سجّل الدخول لإرسال الملاحظة.'; return; }
+  $('#fbSend').disabled = true;
+  try {
+    await db.collection('feedback').add({ uid: S.user.uid, name: S.user.displayName || '', email: S.user.email || '', rating: fbRate, type: $('#fbType').value, msg: msg.slice(0, 1500),
+      page: location.hash || '#home', q: fbCtx ? fbCtx.label : '', im: fbCtx ? fbCtx.im : '', status: 'new', createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    $('#fbDlg').close(); toast('<span class="ti">✓</span><span>شكرًا لك! وصلت ملاحظتك.<small>نقرأ كل الملاحظات ونعمل على تحسين الموقع.</small></span>');
+  } catch (e) { out.className = 'fbout err'; out.textContent = 'تعذّر الإرسال، حاول مرة أخرى.'; console.warn(e); }
+  $('#fbSend').disabled = false;
+};
+const FBT = { idea: 'اقتراح', error: 'خطأ في سؤال/حل', bug: 'مشكلة في الموقع', praise: 'شكر', other: 'أخرى' };
+async function viewAdmin() {
+  setNav(''); setGC(null);
+  if (!S.admin) { $('#app').innerHTML = '<div class="wrap empty">هذه الصفحة للمشرف فقط.</div>'; return; }
+  $('#app').innerHTML = `<div class="wrap"><div class="lhead"><h1>لوحة التحكم</h1></div><div id="adm"><div class="empty">جارٍ التحميل…</div></div></div>`;
+  try {
+    const [fs, us] = await Promise.all([db.collection('feedback').orderBy('createdAt', 'desc').limit(300).get(), db.collection('users').get()]);
+    const items = fs.docs.map(d => ({ id: d.id, ...d.data() })); const nNew = items.filter(x => x.status !== 'done').length;
+    const rated = items.filter(x => x.rating); const avg = rated.length ? (rated.reduce((a, x) => a + x.rating, 0) / rated.length).toFixed(1) : '-';
+    $('#adm').innerHTML = `<div class="score" style="margin:16px 0"><div><b>${us.size}</b><span>طالبًا سجّل الدخول</span></div><div><b>${items.length}</b><span>ملاحظة</span></div><div><b>${nNew}</b><span>جديدة</span></div><div><b>${avg}</b><span>متوسط التقييم من 5</span></div></div>
+      <div class="fbl">${items.map(x => `<div class="fbi${x.status === 'done' ? ' done' : ''}"><div class="h"><b>${esc(x.name || x.email)}</b><span>${esc(x.email)}</span><span class="pill">${esc(FBT[x.type] || x.type)}</span>${x.rating ? `<span class="st">${'★'.repeat(x.rating)}${'☆'.repeat(5 - x.rating)}</span>` : ''}<span>${x.createdAt ? x.createdAt.toDate().toLocaleString('ar-JO') : ''}</span><span class="spacer"></span><button class="btn" data-done="${x.id}" data-v="${x.status === 'done' ? 'new' : 'done'}">${x.status === 'done' ? 'إعادة فتح' : 'تمّت المعالجة'}</button></div>
+        ${x.q ? `<div style="font-size:13px;margin-bottom:4px">السؤال: <a href="${esc(x.page)}">${esc(x.q)}</a></div>` : `<div style="font-size:12px;color:var(--muted)">الصفحة: <a href="${esc(x.page)}">${esc(x.page)}</a></div>`}
+        <div class="m">${esc(x.msg)}</div></div>`).join('') || '<div class="empty">لا ملاحظات بعد.</div>'}</div>`;
+    document.querySelectorAll('[data-done]').forEach(b => b.onclick = async () => { await db.collection('feedback').doc(b.dataset.done).update({ status: b.dataset.v }); viewAdmin(); });
+  } catch (e) { $('#adm').innerHTML = '<div class="empty">تعذّر تحميل البيانات.</div>'; console.warn(e); }
+}
 function render() {
   if (!S.data) return;
   clearInterval(S.tick);
@@ -1049,6 +1127,7 @@ function render() {
   if ((m = h.match(/^w-(.+)$/))) return viewWorksheet(m[1]);
   if ((m = h.match(/^q-(.+)$/))) { if (S.lastQ !== m[1]) { S.lv = 'all'; S.lastQ = m[1]; } return viewQuestions(m[1]); }
   if (h === 'min') return viewMin();
+  if (h === 'admin') return viewAdmin();
   if (h === 'test') return viewTest();
   if (h === 'run') return viewRun();
   if (h === 'progress') return viewProgress();
